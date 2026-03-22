@@ -1,0 +1,31 @@
+# ============================================================
+# Day 1 — Pre-Verified IAM Policy Strings
+# ============================================================
+# INSTRUCTIONS: Copy-paste these exactly. Do NOT modify unless told to.
+# Replace <group-name> with your student group (e.g., sre-students)
+# Replace <compartment-name> with your training compartment name
+# ============================================================
+
+# --- POLICY 1: SRE Student Baseline Access ---
+# Allows students to view and manage compute, networking, and monitoring.
+# Apply this at the START of Day 1 before any labs.
+
+Allow group <group-name> to manage instance-family in compartment <compartment-name>
+Allow group <group-name> to manage virtual-network-family in compartment <compartment-name>
+Allow group <group-name> to read metrics in compartment <compartment-name>
+Allow group <group-name> to manage alarms in compartment <compartment-name>
+Allow group <group-name> to use cloud-shell in tenancy
+
+# --- POLICY 2: OCI Monitoring and Logging Access ---
+Allow group <group-name> to manage logging-family in compartment <compartment-name>
+Allow group <group-name> to manage ons-family in compartment <compartment-name>
+Allow group <group-name> to manage events in compartment <compartment-name>
+
+# --- POLICY 3: Object Storage (for Terraform state) ---
+Allow group <group-name> to manage buckets in compartment <compartment-name>
+Allow group <group-name> to manage objects in compartment <compartment-name>
+
+# ============================================================
+# INSTRUCTOR NOTE: Apply via OCI Console:
+# Identity & Security -> Policies -> Create Policy -> Paste above
+# ============================================================
