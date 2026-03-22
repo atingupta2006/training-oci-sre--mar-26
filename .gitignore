@@ -1,0 +1,39 @@
+# SRE Repeat Training — Git Ignore Rules
+# =========================================
+# These folders are excluded from the student-facing GitHub repository.
+
+# Trainer-only internal folder (credentials, tools, analysis, Game Day guides)
+_internal/
+
+# Supplementary SRE theory reference (optional deep-dive, not core training)
+# Students who want this can access it at: https://github.com/your-org/sre-concepts
+SRE-Concepts-Reference/
+
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+
+# Node.js (BharatMart App has its own .gitignore — these are catch-alls)
+node_modules/
+npm-debug.log*
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor artifacts
+.vscode/
+.idea/
+*.swp
+
+# Terraform state (if any)
+*.tfstate
+*.tfstate.backup
+.terraform/
+
+terraform.tfvars
