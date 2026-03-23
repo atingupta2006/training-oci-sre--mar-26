@@ -7,7 +7,7 @@
     "dev": "vite",
     "db:init": "tsx server/scripts/dbInit.ts",
     "db:reset": "tsx server/scripts/dbInit.ts --reset",
-    "dev:server": "npm run db:init && tsx watch server/index.ts",
+    "dev:server": "tsx watch server/index.ts",
     "dev:worker": "tsx watch server/workers/index.ts",
     "build": "vite build && tsc -p tsconfig.server.json",
     "build:client": "vite build",
