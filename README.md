@@ -7,15 +7,13 @@ Welcome to the **5-Day SRE Training Program** built around the **BharatMart** e-
 ## 📂 Repository Structure
 
 ```
-SRE_Repeat_Training/
+SRE_Training/
 ├── Day-1/          # SRE Fundamentals, Culture & OCI Alignment
 ├── Day-2/          # SLIs, SLOs, Error Budgets & Monitoring
 ├── Day-3/          # Reducing Toil, Observability & Automation
 ├── Day-4/          # High Availability, Resilience & Incident Response
 ├── Day-5/          # Culture, On-Call & DevOps Integration
 ├── BharatMart-App/ # Hands-on SRE training platform (Node.js + React)
-├── SRE-Concepts-Reference/ # Deep SRE theory reference (supplementary)
-└── Presentations/  # Slides and course outline documents
 ```
 
 ---
@@ -79,28 +77,6 @@ SRE_Repeat_Training/
 
 ---
 
-## 📋 IAM Policies — Quick Reference
-
-Each day folder contains a `policies.txt` file with **pre-verified, copy-paste ready** IAM policy strings. **Do not write IAM policies from scratch.** Use these.
-
-```
-Day-1/policies.txt  ← SRE Student Baseline + Cloud Shell access
-Day-2/policies.txt  ← Monitoring, Telemetry, Notifications
-Day-3/policies.txt  ← Logging Service, Resource Manager
-Day-4/policies.txt  ← Load Balancer, Auto Scaling, Vault
-Day-5/policies.txt  ← Service Connector Hub, Events, Functions
-```
-
----
-
-## 🎯 The 80/20 SRE Rule
-
-> **Spend 20% of your time on Configuration. Spend 80% on Observation and Response.**
-
-All labs in this training are designed to get you to the observation phase quickly. Pre-configured OCI resources let you focus on what matters: detecting issues, understanding metrics, and responding to incidents.
-
----
-
 ## 🚀 BharatMart Application — Quick Start
 
 BharatMart is a production-grade e-commerce platform designed for SRE training. It has:
@@ -139,35 +115,3 @@ npm run dev -- --host 0.0.0.0 --port 5173
 
 ---
 
-## 📚 SRE Concepts Reference (Supplementary)
-
-The `SRE-Concepts-Reference/` folder contains deep-dive SRE theory organized into 4 pillars:
-
-- **01-Foundations** — How SRE relates to DevOps, Implementing SLOs
-- **02-Engineering** — Monitoring, Alerting, Eliminating Toil, On-Call, Incident Response, Postmortem Culture
-- **03-Operations** — System Design, Data Pipeline patterns
-- **04-Advanced** — Config Design, Canary Releases, SRE Engagement Model, Team Lifecycles
-
-> **Note:** Some topics are marked `(Skip)` — these are optional advanced readings.
-
----
-
-## ✅ Prerequisites for Students
-
-Before Day 1, ensure you have:
-- Access to an OCI tenancy (credentials provided by trainer)
-- SSH client (PuTTY or built-in terminal)
-- Basic Linux command line familiarity
-- Web browser for OCI Console
-
----
-
-## 🧭 After Completing All 5 Days
-
-Students should be able to:
-- Define SLIs, SLOs, and Error Budgets for real services
-- Set up monitoring, alarms, and dashboards in OCI
-- Use OCI Logging for real-time observability
-- Design high-availability architectures on OCI
-- Conduct blameless postmortems
-- Integrate SRE practices into CI/CD pipelines
