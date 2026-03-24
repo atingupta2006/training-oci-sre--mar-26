@@ -1,0 +1,19 @@
+# ============================================================
+# Day 2 — Pre-Verified IAM Policy Strings
+# ============================================================
+# Prerequisites: Day 1 policies must be applied first.
+# ============================================================
+
+# --- POLICY 4: OCI Telemetry / Custom Metrics Ingestion ---
+# Required for pushing custom metrics to OCI Monitoring
+Allow group <group-name> to use metrics in compartment <compartment-name>
+
+# --- POLICY 5: Notification Topics and Subscriptions ---
+Allow group <group-name> to manage ons-topics in compartment <compartment-name>
+Allow group <group-name> to manage ons-subscriptions in compartment <compartment-name>
+
+# ============================================================
+# QUICK VERIFY (run in Cloud Shell):
+# oci monitoring alarm list --compartment-id <ocid>
+# If it returns results (even empty list), policy is working.
+# ============================================================

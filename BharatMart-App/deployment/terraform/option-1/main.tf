@@ -175,8 +175,8 @@ yum install -y nodejs git
 
 # Clone BharatMart repo
 cd /home/opc
-git clone https://github.com/your-github-org/oci-multi-tier-web-app-ecommerce.git
-cd oci-multi-tier-web-app-ecommerce
+git clone https://github.com/atingupta2006/training-oci-sre--mar-26.git
+cd training-oci-sre--mar-26/BharatMart-App
 
 # Install dependencies
 npm install

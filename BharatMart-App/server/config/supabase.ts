@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
 import { externalCallLatencyMs } from './metrics';
+import { getMockSupabaseClient } from './mockSupabase';
 
 // ✅ Load env file based on environment
 const envFile = '.env';
@@ -11,37 +12,30 @@ console.log('  process.env.ENV_FILE:', process.env.ENV_FILE);
 console.log('  process.env.NODE_ENV:', process.env.NODE_ENV);
 console.log('  ENV FILE:', envFile);
 
-console.log('  ENV FILE:', envFile);
-
 // ✅ Strict backend-only configuration (NO fallbacks to anon or VITE)
 const supabaseUrl = process.env.SUPABASE_URL;
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-// 🚨 Fail fast if misconfigured
-if (!supabaseUrl || !serviceRoleKey) {
-  console.error('❌ Supabase backend configuration error');
-  console.error('SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY is missing');
-  process.exit(1);
-}
+export let useMemoryFallback = false;
 
-// 🚨 Extra hard validation: ensure this is REALLY a service-role JWT
-if (!serviceRoleKey.startsWith('eyJhbGciOi')) {
-  console.error('❌ INVALID SUPABASE SERVICE ROLE KEY FORMAT');
-  console.error('Loaded key does not look like a JWT.');
-  console.error('You may be accidentally using ANON or a wrong secret.');
-  process.exit(1);
+if (!supabaseUrl || !serviceRoleKey || !serviceRoleKey.startsWith('eyJhbGciOi')) {
+  console.warn('⚠️ Supabase config missing or invalid. Falling back to local in-memory DB.');
+  useMemoryFallback = true;
+} else if (supabaseUrl.includes('mock.supabase')) {
+  console.warn('⚠️ Mock Supabase URL detected. Falling back to local in-memory DB.');
+  useMemoryFallback = true;
 }
 
 // ✅ Safe debug logging (no secrets leaked)
 console.log('Supabase Backend Config:');
 console.log('  ENV FILE:', envFile);
-console.log('  URL:', supabaseUrl);
-console.log('  Using SERVICE_ROLE_KEY: true');
+console.log('  URL:', useMemoryFallback ? 'MOCK_IN_MEMORY' : supabaseUrl);
+console.log('  Using SERVICE_ROLE_KEY:', useMemoryFallback ? 'false' : 'true');
 
 // ✅ Backend client using SERVICE ROLE only
-const supabaseClient = createClient(
-  supabaseUrl,
-  serviceRoleKey,
+const supabaseClient = useMemoryFallback ? null : createClient(
+  supabaseUrl as string,
+  serviceRoleKey as string,
   {
     auth: {
       autoRefreshToken: false,
@@ -50,11 +44,24 @@ const supabaseClient = createClient(
   }
 );
 
+export function enableMemoryFallback() {
+  if (!useMemoryFallback) {
+    console.warn('⚠️ Supabase connection failed! Switching to In-Memory Fallback Mode.');
+    useMemoryFallback = true;
+  }
+}
+
+import { SupabaseClient } from '@supabase/supabase-js';
+const mockClient = getMockSupabaseClient();
+
 // Wrap supabase client to time all operations
-export const supabase = new Proxy(supabaseClient, {
+export const supabase: SupabaseClient<any, "public", any> = new Proxy({} as any, {
   get(target, prop) {
-    const value = target[prop as keyof typeof target];
-    if (typeof value === 'object' && value !== null) {
+    const activeClient = useMemoryFallback ? mockClient : supabaseClient;
+    if (!activeClient) return undefined;
+
+    const value = (activeClient as any)[prop];
+    if (typeof value === 'object' && value !== null && !useMemoryFallback) {
       return new Proxy(value as any, {
         get(innerTarget: any, innerProp: string | symbol) {
           const innerValue = innerTarget[innerProp];
