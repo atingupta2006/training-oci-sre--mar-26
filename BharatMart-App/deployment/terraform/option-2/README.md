@@ -329,7 +329,7 @@ curl http://<load_balancer_public_ip>:3000/api/health
 * Use OCI DevOps pipelines
 * Add WAF & path-based routing
 
-**Note:** For instance pools and auto-scaling, see `option-3` deployment option.
+**Note:** For instance pools and auto-scaling, see `option-2` deployment option.
 
 ---
 

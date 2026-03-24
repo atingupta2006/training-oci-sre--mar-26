@@ -1,94 +1,132 @@
-# Run these commands manually one at a time after Terraform has created resources
-# Note: Terraform user_data already installs Node.js, Git, clones repo, and runs npm install
+# Note: Terraform cloud-init automatically deploys both frontend and backend
+# Frontend: Built and served via nginx on port 80
+# Backend: Runs as systemd service on port 3000
 # ============================================================================
 
 # STEP 1: Get IPs from Terraform outputs (run in your local terminal)
 # ============================================================================
 # Get Load Balancer Public IP (this is the frontend IP users will access)
-# Get Frontend VM Public IP (for SSH connection)
-# Get Backend VM Private IP (backend is in private subnet)
+
+# Get Frontend VM Public IPs (for SSH connection)
+
+# Get Backend Instance Pool ID
 
 # Save these values:
 # LB_PUBLIC_IP=<load_balancer_public_ip>
-# FRONTEND_VM_IP=<frontend_public_ip>
-# BACKEND_VM_IP=<backend_private_ip>
+# FRONTEND_VM_IP=<first_frontend_public_ip>
+# BACKEND_POOL_ID=<backend_instance_pool_id>
 
-# STEP 2: Copy SSH keys to Frontend VM (run from your local laptop)
+# STEP 2: Verify Deployment Status
 # ============================================================================
+# Check if services are accessible via Load Balancer
+curl http://LB_PUBLIC_IP
+curl http://LB_PUBLIC_IP:3000/api/health
+
+# STEP 3: Access Frontend VM for Troubleshooting (if needed)
+# ============================================================================
+# Copy SSH keys to Frontend VM (run from your local laptop)
 # Replace YOUR_KEY_PATH with your SSH private key path (e.g., ~/.ssh/id_rsa)
 # Replace FRONTEND_VM_IP with the IP from step 1
 scp -i ~/.ssh/YOUR_KEY ~/.ssh/YOUR_KEY opc@FRONTEND_VM_IP:~/.ssh/
 scp -i ~/.ssh/YOUR_KEY ~/.ssh/YOUR_KEY.pub opc@FRONTEND_VM_IP:~/.ssh/
 
-# Set proper permissions on the key in frontend VM (you'll do this after SSH)
-# chmod 600 ~/.ssh/YOUR_KEY
-
-# STEP 3: Connect to Frontend VM (run from your local laptop)
-# ============================================================================
+# Connect to Frontend VM
 ssh -i ~/.ssh/YOUR_KEY opc@FRONTEND_VM_IP
 
-# STEP 4: Deploy Backend on Backend VM
+# Once connected to Frontend VM, run the following commands:
+
+# Check nginx status
+sudo systemctl status nginx
+
+# Check if frontend files are deployed
+ls -la /usr/share/nginx/html/
+
+# View nginx logs
+sudo tail -f /var/log/nginx/access.log
+sudo tail -f /var/log/nginx/error.log
+
+# Check cloud-init logs (to see if deployment completed)
+sudo cat /var/log/cloud-init-output.log
+
+# Restart nginx if needed
+sudo systemctl restart nginx
+
+# STEP 4: Access Backend Instance Pool Instances (via Frontend VM)
 # ============================================================================
-# From Frontend VM, SSH into Backend VM (backend has no public IP)
-# Replace BACKEND_VM_IP with the private IP from step 1
-ssh -i ~/.ssh/YOUR_KEY opc@BACKEND_VM_IP
+# From Frontend VM, get backend instance private IPs using OCI CLI
+# First, install OCI CLI if not already installed:
+# bash -c "$(curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh)"
+
+# List backend instances in the pool
+oci compute-management instance-pool list-instances --instance-pool-id BACKEND_POOL_ID --compartment-id YOUR_COMPARTMENT_ID
+
+# Get private IP of a backend instance (use the output from above command)
+# Then SSH to backend instance from Frontend VM:
+ssh -i ~/.ssh/YOUR_KEY opc@BACKEND_INSTANCE_PRIVATE_IP
 
 # Once connected to Backend VM, run the following commands:
 
-# Navigate to project directory (Wait 1 minute after boot for Terraform to clone the repo)
-cd /home/opc/training-oci-sre--mar-26/BharatMart-App
+# Check backend service status
+sudo systemctl status bharatmart-backend
 
-# Setup Environment Variables
-cp .env.example .env
+# View backend service logs
+sudo journalctl -u bharatmart-backend -f
 
-# Automatically update .env with the Load Balancer IP
-# NOTE: Replace 'YOUR_LB_PUBLIC_IP' below with the actual LB IP from step 1
-sed -i "s|FRONTEND_URL=.*|FRONTEND_URL=http://YOUR_LB_PUBLIC_IP|g" .env
-sed -i "s|CORS_ORIGIN=.*|CORS_ORIGIN=http://YOUR_LB_PUBLIC_IP|g" .env
+# Check if backend is running
+ps aux | grep node
 
-# Configure firewall and networking
-sudo systemctl stop firewalld
-sudo systemctl disable firewalld
-sudo systemctl stop nftables
-sudo systemctl disable nftables
+# Check backend port
+sudo netstat -tlnp | grep 3000
 
-# Enable IP forwarding
-sudo sysctl net.ipv4.ip_forward
-sudo sysctl -w net.ipv4.ip_forward=1
-echo "net.ipv4.ip_forward = 1" | sudo tee -a /etc/sysctl.conf
-sudo sysctl -p
-sudo sysctl net.ipv4.ip_forward
+# Restart backend service if needed
+sudo systemctl restart bharatmart-backend
 
-# Start backend server (runs on port 3000)
-npm run dev:server
+# View cloud-init logs
+sudo cat /var/log/cloud-init-output.log
 
-# To run in background:
-# nohup npm run dev:server &
+# Check .env file (auto-generated by Terraform)
+cat /opt/bharatmart/BharatMart-App/.env
 
-# STEP 5: Deploy Frontend on Frontend VM
+# STEP 5: Manual Deployment (if cloud-init failed or needs update)
 # ============================================================================
-# Exit from Backend VM (type: exit)
-# You should now be back on Frontend VM
+# If you need to manually deploy or update, follow these steps:
 
-# Navigate to project directory (Wait 1 minute after boot for Terraform to clone the repo)
-cd /home/opc/training-oci-sre--mar-26/BharatMart-App
+# On Frontend VM:
+cd /opt/bharatmart/BharatMart-App
+git pull
+npm install
+npm run build
+sudo rm -rf /usr/share/nginx/html/*
+sudo cp -r dist/* /usr/share/nginx/html/
+sudo systemctl restart nginx
 
-# Setup Environment Variables
-cp .env.example .env
+# On Backend VM (access via Frontend VM):
+cd /opt/bharatmart/BharatMart-App
+git pull
+npm install
+npm run build:server
+sudo systemctl restart bharatmart-backend
 
-# Automatically update .env with the Load Balancer IP
-# NOTE: Replace 'YOUR_LB_PUBLIC_IP' below with the actual LB IP from step 1
-sed -i "s|VITE_API_URL=.*|VITE_API_URL=http://YOUR_LB_PUBLIC_IP:3000/api|g" .env
+# STEP 6: View Application Logs
+# ============================================================================
+# Backend logs (on Backend VM):
+sudo journalctl -u bharatmart-backend -n 100
+sudo journalctl -u bharatmart-backend -f
 
-# Configure firewall and networking
-sudo systemctl stop firewalld
-sudo systemctl disable firewalld
+# Frontend nginx logs (on Frontend VM):
+sudo tail -f /var/log/nginx/access.log
+sudo tail -f /var/log/nginx/error.log
 
-# Start frontend server (runs on port 80)
-sudo npm run dev -- --host 0.0.0.0 --port 80
+# Application logs (if configured):
+tail -f /opt/bharatmart/BharatMart-App/logs/api.log
 
-# To run in background:
-# nohup sudo npm run dev -- --host 0.0.0.0 --port 80 &
+# STEP 7: Check Load Balancer Health
+# ============================================================================
+# From your local terminal, check backend health:
+curl http://LB_PUBLIC_IP:3000/api/health
+
+# Check frontend:
+curl http://LB_PUBLIC_IP
 
 # ============================================================================
 # Access URLs (use Load Balancer Public IP from step 1):

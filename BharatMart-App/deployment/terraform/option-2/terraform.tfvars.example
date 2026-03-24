@@ -1,63 +1,141 @@
-########################################
-# REQUIRED VARIABLES
-########################################
+############################################################
+# 🚨 MANDATORY: OCI AUTHENTICATION
+############################################################
 
-compartment_id = "ocid1.compartment.oc1..aaaaaaa......"
-tenancy_ocid   = "ocid1.tenancy.oc1..aaaaaaa..."
+tenancy_ocid = "ocid1.tenancy.oc1..aaaaaaa..."
+user_ocid    = "ocid1.user.oc1..aaaaaaa..."
+fingerprint  = "61:b1:d3:bd:56:07:a4:f7:b4:e0:ea:8f:d6:85:e2:ee"
+region       = "eu-frankfurt-1"
 
-image_id       = "ocid1.image.oc1.ap-mumbai-1.aaaaaaa..."
-ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ..."
+# For LOCAL Terraform CLI usage
+private_key_path = "~/.oci/oci_api_key.pem"
 
-########################################
-# GENERAL SETTINGS
-########################################
+# For OCI Resource Manager (leave empty when using CLI)
+private_key = <<EOF
+-----BEGIN PRIVATE KEY-----
+MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCxvVviNcAVny6T
+xUGRoT+lR+I7k+RMXulIVW7TZYzVAe1yUm4BzPtKE+jgi5s3TZDmxgqOtQU4nF1o
+uwvIPefHiKbepgIS1tKQjG9C1orQnqOepTRUyr7SfOPYzGfQRSC7MqLTX1Xv+XTk
+KVQ4ksNJaWN8tieZ2d6J6CrNZC7gkqxOyIyLJl19mx6sQZmh+XpF8KtIKtoIY7hd
+fGdGfJLdZU5TjkuHUTsrqribBOX8FwUUr0gZIxQO3qhQc1F6Jp20wsdfu5yKx5CP
+NqTfxdlyMcEfLOgtISEYywudoZDO2mEoFXHpMfKTjLEo9qYJrTwfAL9tRHDwzjQO
+G5jjXn2tAgMBAAECggEAKv/jrctRKCn1i7xqC4BWNHc6jS1PSwafK2e3wx7LPnET
+79dvU7IyjQ5aBZDgwTVbu+jnfvTeSX7SvlaaGByZ6VTvAehpkgM0t9GxzRq4RJZM
+gUH4chcGqUebm8R/zQwcSg2LBNYIpWDVXal9/Z3L7wO3FOHAnODvjK+FQ2FcUeni
+tlEU/iY+0OkSmOXY1i3IDuxoqd/Epiiq/k5za2pRE8wUDPycwB0Y1D2YIMzklWz6
+NF7fuMHd/yPJF0OXw3jXOZK/87KSu6kHnaEfdMFl1ofjAPQ18KnP/oB2RjmnCG4p
+IyOwdJUkNQfXSLmNcbnB4flL9i6nrEWqR4oumTYERQKBgQDhQt4ZokpQ5yQv4iSH
+utT9BDFckpkUt+EwbB5SP0raTtoCgPsnw8bIPjJ5SER23iXYKlsa5SqYbsmlLYoF
+LHd1sX+e/rlNNFnAUYfJh693dUrQPAX2iiCSrbD/0I+7rOPdKC9wKnZAnndq94k1
+RcFw4zYeQMtF2COM420goDDGhwKBgQDJ/meYEyB2Msdp/IgHCTeq05bqgCaAlKyv
+xrfHhyRYBB6BM4XSvvlPf0Oi/PdG5C14yARAMnGA69P4m7Dh4cjh3c2i49mx6Dvu
+1/9o0fZWwE80jyOq+4ESCcOqt97nIm2V6sxK0aWkhVVm/kdQ9/1eDnMiOTwvnlYq
+oHYmLy3zKwKBgDEPABHzH15JSL9I8A3DadmEzT9NChvSBDAoi937vNCYtbAv6QL7
+B1LbAOEbFRYSQYm3h8nuuP0ju7TGmzWPPqEaPCIjdbXTvew9lWYVr+hDWjzJpb7Q
+zFFFlLPR90u3VpT2yIYUKVbfbECWkoJQo9VzFnk2QU7/yJZJfZ3KZXUHAoGAD3Nj
+TzGfWQs3T7ceXJNq66k1sQhOaaV1tBhaNGv07rqZ7r4XLXCoN1l/vfbln0mS5Ns/
+3/07y2W+mBSoqg6QRB6oPR56p24hL3rcMZNl6WraZCXSz6BfVhbjHark5P8wLLiC
+GfMBXZ1JVBB9OgdOHSSzz9la7jWJV8dgYjlXpXMCgYEAol9akAmsH2rnsjC1SYBp
+1M4nBAn0z4gpG6HN5/QAwCeGG+6T7mos1SUkTyC1ThKIZ7YIZiU75e12/kLnMF6S
+m4NWgrTixm7eiKX+olRW2AxfF/xl8zVC3HeXlpyOwGX7mACRvcnE8omkFlIFX/fo
+0+lxhJe3B46pDED7qhYkCl4=
+-----END PRIVATE KEY-----
+EOF
 
-region       = "ap-mumbai-1"
-project_name = "bharatmart"
-environment  = "dev"
+private_key_password = ""
 
-########################################
-# NETWORK CONFIG
-########################################
+# Compartment for all resources
+compartment_ocid = "ocid1.compartment.oc1..aaaaaaa..."
 
-vcn_cidr            = "10.0.0.0/16"
-public_subnet_cidr  = "10.0.1.0/24"
-private_subnet_cidr = "10.0.2.0/24"
+############################################################
+# 🚨 MANDATORY: SSH ACCESS
+############################################################
 
-enable_nat_gateway       = true
-enable_backend_public_ip = false
+ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDFe2RyQy4Rbh0SZfWFqLDys4pidV382bZVFV/pFqzeEuXRF+AuIVcwNWs7p7J27f5PJaGWCLeRN7MxJnXYhm+8Ul7cbLM6chK2qusx2uarTXeqGog6zurAY9RA4n5uX+T5Fc30rvshx14CMnLXC/VHT6khyMRCOrfza52uxUk2A27xuWdq6dL/YIkIut1nLoPRGSUIZwIqJz4f5xNTSf/KSaGsFsItl3e0f19Nhdq4qszI6vFQUDBJAL2NVl5qkrm/9V8OFoB5/lRP3SqK84Z76jb0b3mkCo0raZNIdanl4wBfN6OC6CZYqtjUtdlCC/bdKGYNSoeD0CND0+DE9lEFZpxx2i4Y1EWUKuQsTB4wUYfPaZHZZvUtvJpUd/ts2wG7nLXjtcu54WSRXFjsADojbwW3x44x62cOtskZ/h0oWEpl3vUYJTSTw5uGN3191aewXDEmBlbjV6CbXVtyU/qLdA9nfBnJlIcmB1epbrvzAUY75Qts+5bwhb8s+f/VEjZO9eZZRsUtA/A4L4du269jS44yV1bbxl6VEonFzHIR9kZ8V5c7IkgJ8u0x8qFMjWkvYMLdvEsWK+7+Pppxi+Uh+YxsYmEWzT7aSg+Ucm7sh0xZoCKHOoUL1lXHG9dDhuIcJU5HTeUVlOLEtgaq1Xtn+tWSdxHWGZ9FZoO2yn4z0w== adminuser@ubuntu3"
 
-########################################
-# FRONTEND VM SETTINGS
-########################################
+# Restrict if needed
+ssh_ingress_cidr = "0.0.0.0/0"
+
+
+############################################################
+# 🚨 MANDATORY: GITHUB REPOSITORY (Your App Code)
+############################################################
+
+github_repo_url = "https://github.com/atingupta2006/training-oci-sre--mar-26.git"
+
+
+############################################################
+# 🚨 MANDATORY: ENVIRONMENT VALUES (Injected Automatically)
+############################################################
+
+supabase_url              = "https://zdqkotajomqmcfrnxmac.supabase.co"
+supabase_anon_key         = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkcWtvdGFqb21xbWNmcm54bWFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDc0MTAsImV4cCI6MjA4OTg4MzQxMH0.yloNemspJzogcf20w7nw4CyUlRb8RknH5jqO6Kcy-5k"
+supabase_service_role_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkcWtvdGFqb21xbWNmcm54bWFjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDMwNzQxMCwiZXhwIjoyMDg5ODgzNDEwfQ.xlThdGsWexYFH3nGIUiU6Yd7stt2v3321GITXcAABzA"
+jwt_secret                = "CHANGE_THIS_SECRET_TO_A_SECURE_VALUE"
+
+admin_email    = "admin@bharatmart.com"
+admin_password = "Admin@123"
+
+
+############################################################
+# IMAGE SETTINGS
+############################################################
+
+# Auto-discover OL9 image for correct region + shape
+os_version = "9"
+
+use_custom_images        = false
+frontend_custom_image_id = null
+backend_custom_image_id  = null
+
+
+############################################################
+# FRONTEND SETTINGS
+############################################################
 
 frontend_instance_count = 1
-frontend_instance_shape = "VM.Standard.A1.Flex"
+frontend_shape          = "VM.Standard.E5.Flex"
 
-########################################
-# BACKEND VM SETTINGS
-########################################
+# Flex shape configuration
+frontend_flex_ocpus      = 2
+frontend_flex_memory_gbs = 12
 
-compute_instance_count        = 1
-compute_instance_shape        = "VM.Standard.A1.Flex"
-compute_instance_ocpus        = 2
-compute_instance_memory_in_gb = 12
+frontend_port = 80
 
-########################################
+
+############################################################
+# BACKEND INSTANCE POOL SETTINGS
+############################################################
+
+backend_shape           = "VM.Standard.E5.Flex"
+backend_flex_ocpus      = 2
+backend_flex_memory_gbs = 12
+
+backend_api_port = 3000
+
+backend_pool_initial_size = 2
+backend_pool_min_size     = 1
+backend_pool_max_size     = 10
+
+
+############################################################
+# AUTOSCALING RULES
+############################################################
+
+backend_cpu_scale_out_threshold = 70
+backend_cpu_scale_in_threshold  = 30
+
+
+############################################################
 # LOAD BALANCER SETTINGS
-########################################
+############################################################
 
-load_balancer_shape          = "flexible"
-load_balancer_shape_min_mbps = 10
-load_balancer_shape_max_mbps = 10
+lb_min_bandwidth_mbps = 10
+lb_max_bandwidth_mbps = 100
 
-########################################
-# TAGS
-########################################
 
-tags = {
-  Project     = "BharatMart"
-  ManagedBy   = "Terraform"
-  Environment = "dev"
-  Team        = "SRE"
-}
+############################################################
+# PROJECT METADATA
+############################################################
+
+project_name = "bharatmart"

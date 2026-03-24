@@ -11,7 +11,7 @@ This Terraform configuration creates a minimal but complete infrastructure setup
 - **Security Lists** with appropriate rules for direct access to the VM
 - **Single Compute Instance** (all-in-one) hosting both frontend and backend API
 
-**Note:** This is a simplified deployment option ideal for development, testing, or training purposes. For production, consider using `option-2` (multi-VM with Load Balancer) or `option-3` (instance pools with auto-scaling).
+**Note:** This is a simplified deployment option ideal for development, testing, or training purposes. For production, consider using `option-2` (instance pools with auto-scaling).
 
 ## Prerequisites
 
@@ -188,12 +188,7 @@ After Terraform creates the infrastructure:
 - ❌ No load balancing
 - ❌ Single point of failure
 
-### Option-2 (Multi-VM with Load Balancer)
-- Multiple VMs
-- Load Balancer for high availability
-- Better for production workloads
-
-### Option-3 (Instance Pools with Auto-Scaling)
+### Option-2 (Instance Pools with Auto-Scaling)
 - Instance pools for scalability
 - Auto-scaling based on metrics
 - Best for production with variable load
