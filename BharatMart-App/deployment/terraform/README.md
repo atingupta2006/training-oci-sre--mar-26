@@ -23,6 +23,20 @@ This directory contains the two primary Terraform deployment architectures used 
 * **Course Context:** Used in **Day 4** for the "Load Balancer + Auto Scaling" Lab and "Chaos Engineering" simulations. 
 * **When to use:** Production workloads that need resilience, predictability, automatic recovery, and to demonstrate error budgets and chaos engineering.
 
+---
+
+## 🔒 Required Secure Files (Instructor Provided)
+
+Because this repository is public, sensitive configuration files are intentionally omitted. **Before beginning your labs**, your instructor will provide the following files to you via a secure channel (e.g., Slack, Email, or a secure Drive link):
+
+1. **`terraform.tfvars`**: Contains your specific OCI tenancy OCIDs, user OCIDs, Supabase API keys, and secure passwords. (You can view the structure in the provided `.example` files).
+2. **OCI API Keys (`oci_api_key.pem`)**: If you are running Terraform locally via CLI, you will need the private key to authenticate against your OCI Tenancy.
+3. **SSH Access Keys (`id_rsa` / `id_rsa.pub`)**: Required to SSH into the provisioned instances for debugging.
+
+**Do not commit these files to GitHub if you clone or fork this repository.**
+
+---
+
 ## Getting Started
 
 1. Pick an option directory above matching the current curriculum Day.

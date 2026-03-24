@@ -160,7 +160,7 @@ After seeding, you can log in with:
 - **Explore the API:** See [API Reference](../03-api-reference/01-api-overview.md)
 - **Understand Architecture:** See [Architecture Overview](03-architecture-overview.md)
 - **Configure for Production:** See [Configuration Guide](../04-configuration/)
-- **Deploy:** See [Deployment Guides](../05-deployment/)
+- **Deploy:** See [Deployment Guides](../../deployment/terraform/README.md)
 
 ## Common First-Time Issues
 

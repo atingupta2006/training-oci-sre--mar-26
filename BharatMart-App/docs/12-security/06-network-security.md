@@ -168,6 +168,6 @@ app.use(cors({
 ## Next Steps
 
 - [Security Overview](01-security-overview.md) - Security overview
-- [Deployment Guides](../05-deployment/) - Deployment security
+- [Deployment Guides](../../deployment/terraform/README.md) - Deployment security
 - [Configuration: Environment Variables](../04-configuration/01-environment-variables.md) - Network configuration
 

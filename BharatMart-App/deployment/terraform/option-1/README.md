@@ -15,6 +15,13 @@ This Terraform configuration creates a minimal but complete infrastructure setup
 
 ## Prerequisites
 
+> **⚠️ INSTRUCTOR PROVIDED FILES**  
+> Sensitive files are excluded from this git repository. To proceed with this lab, your instructor will securely provide you with:  
+> 1. A pre-filled `terraform.tfvars` file containing the required OCIDs, passwords, and API keys.  
+> 2. `oci_api_key.pem` (if testing via local CLI).  
+> 3. SSH keypairs for Compute instance access.  
+> **Please ask your instructor for these files before starting.**
+
 1. **OCI Account** with appropriate permissions
 2. **OCI Compartment** OCID where resources will be created
 3. **Terraform** version >= 1.5.0 (for local testing, or use OCI Resource Manager)
@@ -70,8 +77,8 @@ deployment/terraform/option-1/
 
 2. **Configure variables**:
    ```bash
-   cp terraform.tfvars.example terraform.tfvars
-   # Edit terraform.tfvars with your values
+   cp /path/to/downloaded/terraform.tfvars .
+   # Use the file provided securely by your instructor
    ```
 
 3. **Plan**:

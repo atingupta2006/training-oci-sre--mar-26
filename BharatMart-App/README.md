@@ -88,14 +88,7 @@ Complete documentation is available in the `docs/` directory:
 - [Deployment Configuration](docs/04-configuration/06-deployment-configuration.md) - Deployment settings
 
 ### Deployment
-- [Deployment Overview](docs/05-deployment/01-deployment-overview.md) - Deployment options
-- [Local Development](docs/05-deployment/02-local-development.md) - Local setup
-- [Single-VM Deployment](docs/05-deployment/03-single-vm-deployment.md) - Single VM setup
-- [Multi-Tier Deployment](docs/05-deployment/04-multi-tier-deployment.md) - Multi-tier setup
-- [Kubernetes Deployment](docs/05-deployment/05-kubernetes-deployment.md) - Kubernetes setup
-- [Docker Deployment](docs/05-deployment/06-docker-deployment.md) - Docker setup
-- [OCI Deployment](docs/05-deployment/07-oci-deployment.md) - Oracle Cloud setup
-- [Scaling Guide](docs/05-deployment/08-scaling-guide.md) - Scaling strategies
+- [Terraform Deployments](deployment/terraform/README.md) - OCI infrastructure setup (Single VM & Auto-Scaling)
 
 ### Observability
 - [Observability Overview](docs/06-observability/01-observability-overview.md) - Three pillars
@@ -264,14 +257,11 @@ npm run db:reset         # Reset database
 
 ## Deployment
 
-### Deployment Modes
+### Deployment Configurations
 
-1. **Single-VM** - All components on one VM
-2. **Multi-Tier** - Separate VMs per tier
-3. **Kubernetes** - Container orchestration
-4. **Docker Compose** - Local multi-tier development
+This repository is designed to be deployed natively on **Oracle Cloud Infrastructure (OCI)** using Terraform. All production setups are handled via infrastructure-as-code to match the SRE curriculum.
 
-**Source:** Deployment modes in `docs/05-deployment/01-deployment-overview.md`.
+**Source:** Deployment modes in `deployment/terraform/README.md`.
 
 ## SRE Training
 

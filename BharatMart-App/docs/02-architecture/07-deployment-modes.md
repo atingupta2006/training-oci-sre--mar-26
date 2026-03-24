@@ -217,6 +217,6 @@ DEPLOYMENT_MODE=kubernetes
 ## Next Steps
 
 - [System Architecture](01-system-architecture.md) - Overall system architecture
-- [Deployment Guides](../05-deployment/) - Detailed deployment instructions
+- [Deployment Guides](../../deployment/terraform/README.md) - Detailed deployment instructions
 - [Configuration: Deployment](../04-configuration/06-deployment-configuration.md) - Deployment configuration
 

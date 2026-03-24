@@ -60,14 +60,14 @@ For production use:
 
 - **New to the platform?** Start with [Quick Start](02-quick-start.md)
 - **Understanding architecture?** See [Architecture Overview](03-architecture-overview.md)
-- **Deploying to production?** See [Deployment Guides](../05-deployment/)
+- **Deploying to production?** See [Deployment Guides](../../deployment/terraform/README.md)
 - **SRE Training?** See [SRE Training](../09-sre-training/)
 - **Troubleshooting?** See [Troubleshooting](../10-troubleshooting/)
 
 ## Quick Start Options
 
 1. **5-Minute Local Setup:** [Quick Start Guide](02-quick-start.md) - Get running locally with Supabase
-2. **Production Deployment:** [Deployment Overview](../05-deployment/01-deployment-overview.md) - Deploy to production
+2. **Production Deployment:** [Deployment Overview](../../deployment/terraform/README.md) - Deploy to production
 3. **SRE Training:** [Training Overview](../09-sre-training/01-training-overview.md) - Start 5-day training course
 4. **API Integration:** [API Reference](../03-api-reference/01-api-overview.md) - Integrate with the API
 

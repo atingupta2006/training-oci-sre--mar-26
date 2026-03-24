@@ -209,5 +209,5 @@ Once prerequisites are met:
 1. [Quick Start Guide](02-quick-start.md) - Get the application running
 2. [Architecture Overview](03-architecture-overview.md) - Understand the system
 3. [Configuration Guide](../04-configuration/) - Configure for your needs
-4. [Deployment Guides](../05-deployment/) - Deploy to production
+4. [Deployment Guides](../../deployment/terraform/README.md) - Deploy to production
 

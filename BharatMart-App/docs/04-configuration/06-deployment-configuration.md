@@ -215,5 +215,5 @@ CONFIG_PROVIDER=oci-app-config
 
 - [Environment Variables](01-environment-variables.md) - Complete environment variable reference
 - [Deployment Modes](../02-architecture/07-deployment-modes.md) - Detailed deployment mode documentation
-- [Deployment Guides](../05-deployment/) - Step-by-step deployment instructions
+- [Deployment Guides](../../deployment/terraform/README.md) - Step-by-step deployment instructions
 

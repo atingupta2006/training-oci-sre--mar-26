@@ -31,132 +31,22 @@ deployment/terraform/
 
 # ✅ **1. Prerequisites**
 
-### ✔ A. OCI CLI Installed
-
-```bash
-oci --version
-```
-
-### ✔ B. Correctly Authenticated
-
-```bash
-oci iam region list
-```
-
-### ✔ C. Fetch Required Values From OCI CLI
-
----
-
-## 📌 **Get Tenancy OCID**
-
-```bash
-grep tenancy ~/.oci/config | awk -F '=' '{print $2}' | tr -d ' '
-```
-
----
-
-## 📌 **Get Compartment OCID**
-
-```bash
-oci iam compartment list --all \
-  --query "data[].{Name:name,ID:id}" \
-  --output table
-```
-
-Pick your compartment → copy the OCID.
-
----
-
-## 📌 **Get Latest Oracle Linux ARM Image OCID**
-
-```bash
-oci compute image list \
-  --compartment-id <COMPARTMENT_OCID> \
-  --shape "VM.Standard.A1.Flex" \
-  --operating-system "Oracle Linux" \
-  --operating-system-version "8" \
-  --query "data[0].id" \
-  --raw-output
-```
-
----
-
-## 📌 **Get Available Shapes**
-
-```bash
-oci compute shape list \
-  --compartment-id <COMPARTMENT_OCID> \
-  --all | jq -r '.[].shape'
-```
-
----
-
-## 📌 **Ensure You Have a Public SSH Key**
-
-```bash
-cat ~/.ssh/id_rsa.pub
-```
-
----
+> **⚠️ INSTRUCTOR PROVIDED FILES**  
+> Sensitive files are excluded from this git repository. To proceed with this lab, your instructor will securely provide you with:  
+> 1. A pre-filled `terraform.tfvars` file containing the required OCIDs, passwords, and API keys.  
+> 2. `oci_api_key.pem` (if testing via local CLI).  
+> 3. SSH keypairs for Compute instance access.  
+> **Please ask your instructor for these files before starting.**
 
 # 🎛 **2. Configure terraform.tfvars**
 
-First copy the example file:
+Since your instructor has provided the secure `terraform.tfvars` file to you directly via Slack/Email, simply copy it into this directory:
 
 ```bash
-cp terraform.tfvars.example terraform.tfvars
+cp /path/to/downloaded/terraform.tfvars .
 ```
 
-Then update these values:
-
-* `compartment_id`
-* `tenancy_ocid`
-* `image_id`
-* `ssh_public_key`
-* Optional:
-
-  * `frontend_instance_count`
-  * `compute_instance_count`
-  * `enable_backend_public_ip`
-  * FLEX-shape CPU/RAM overrides
-
----
-
-# 🔧 **2.1 Auto-update terraform.tfvars using sed**
-
-## ⭐ Replace Compartment ID
-
-```bash
-sed -i "s|compartment_id = .*|compartment_id = \"${COMPARTMENT_ID}\"|g" terraform.tfvars
-```
-
-## ⭐ Replace Tenancy OCID
-
-```bash
-TENANCY_OCID=$(grep tenancy ~/.oci/config | awk -F '=' '{print $2}' | tr -d ' ')
-sed -i "s|tenancy_ocid = .*|tenancy_ocid = \"${TENANCY_OCID}\"|g" terraform.tfvars
-```
-
-## ⭐ Replace Image ID
-
-```bash
-IMAGE_ID=$(oci compute image list \
-  --compartment-id $COMPARTMENT_ID \
-  --shape "VM.Standard.A1.Flex" \
-  --operating-system "Oracle Linux" \
-  --operating-system-version "8" \
-  --query "data[0].id" \
-  --raw-output)
-
-sed -i "s|image_id = .*|image_id = \"${IMAGE_ID}\"|g" terraform.tfvars
-```
-
-## ⭐ Replace SSH Key
-
-```bash
-SSH_KEY=$(cat ~/.ssh/id_rsa.pub)
-sed -i "s|ssh_public_key = .*|ssh_public_key = \"${SSH_KEY}\"|g" terraform.tfvars
-```
+You do not need to manually configure OCIDs, Supabase Keys, or SSH keys, as they are pre-filled for you.
 
 ---
 

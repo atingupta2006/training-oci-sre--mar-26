@@ -264,5 +264,5 @@ Workers log:
 
 - [Worker Reliability Model](08-worker-reliability-model.md) - Reliability semantics and guarantees
 - [Configuration: Worker Adapters](../04-configuration/04-worker-adapters.md) - Worker configuration
-- [Deployment: Workers](../05-deployment/) - Worker deployment guides
+- [Deployment: Workers](../../deployment/terraform/README.md) - Worker deployment guides
 

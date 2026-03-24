@@ -441,11 +441,11 @@ If you see errors about missing environment variables:
 
 ### Deployment Guides
 
-- 📦 [Local Development](../docs/05-deployment/02-local-development.md)
-- 🖥️ [Single VM Deployment](../docs/05-deployment/03-single-vm-deployment.md)
-- 🔄 [Multi-Tier Deployment](../docs/05-deployment/04-multi-tier-deployment.md)
-- ☸️ [Kubernetes Deployment](../docs/05-deployment/05-kubernetes-deployment.md)
-- ☁️ [OCI Deployment](../docs/05-deployment/07-oci-deployment.md)
+- 📦 [Local Development](../deployment/terraform/README.md)
+- 🖥️ [Single VM Deployment](../deployment/terraform/README.md)
+- 🔄 [Multi-Tier Deployment](../deployment/terraform/README.md)
+- ☸️ [Kubernetes Deployment](../deployment/terraform/README.md)
+- ☁️ [OCI Deployment](../deployment/terraform/README.md)
 
 ---
 
