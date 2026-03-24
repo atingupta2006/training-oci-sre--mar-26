@@ -21,13 +21,11 @@ const app = express();
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 
 app.use(cors({
-  origin: [
-    FRONTEND_URL,
-    'http://localhost:5173',
-    'http://40.81.230.114:5173',
-    'http://localhost:3000',
-    'http://40.81.230.114:3000',
-  ],
+  origin: function (origin, callback) {
+    // Allow any origin for the SRE training environment 
+    // to support dynamic VM IPs and Load Balancers
+    callback(null, true);
+  },
   credentials: true,
 }));
 
