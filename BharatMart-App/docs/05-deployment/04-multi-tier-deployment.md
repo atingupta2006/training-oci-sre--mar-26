@@ -156,8 +156,8 @@ npm run build:server
 NODE_ENV=production
 PORT=3000
 FRONTEND_URL=https://yourdomain.com
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=your-key
+SUPABASE_URL=https://zdqkotajomqmcfrnxmac.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkcWtvdGFqb21xbWNmcm54bWFjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDMwNzQxMCwiZXhwIjoyMDg5ODgzNDEwfQ.xlThdGsWexYFH3nGIUiU6Yd7stt2v3321GITXcAABzA
 CACHE_REDIS_URL=redis://cache-vm-ip:6379
 QUEUE_REDIS_URL=redis://queue-vm-ip:6379
 DEPLOYMENT_MODE=multi-tier
@@ -259,8 +259,8 @@ NODE_ENV=production
 WORKER_TYPE=email  # or order, payment, all
 WORKER_CONCURRENCY=5
 QUEUE_REDIS_URL=redis://queue-vm-ip:6379
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=your-key
+SUPABASE_URL=https://zdqkotajomqmcfrnxmac.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkcWtvdGFqb21xbWNmcm54bWFjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDMwNzQxMCwiZXhwIjoyMDg5ODgzNDEwfQ.xlThdGsWexYFH3nGIUiU6Yd7stt2v3321GITXcAABzA
 ```
 
 **4. Start Workers:**

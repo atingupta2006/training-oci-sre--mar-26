@@ -68,8 +68,8 @@ docker build -f deployment/Dockerfile.backend -t bharatmart-backend:latest .
 ```bash
 docker build -f deployment/Dockerfile.frontend \
   --build-arg VITE_API_GATEWAY_URL=http://localhost:3000 \
-  --build-arg VITE_SUPABASE_URL=https://your-project.supabase.co \
-  --build-arg VITE_SUPABASE_ANON_KEY=your-anon-key \
+  --build-arg VITE_SUPABASE_URL=https://zdqkotajomqmcfrnxmac.supabase.co \
+  --build-arg VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkcWtvdGFqb21xbWNmcm54bWFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDc0MTAsImV4cCI6MjA4OTg4MzQxMH0.yloNemspJzogcf20w7nw4CyUlRb8RknH5jqO6Kcy-5k
   -t bharatmart-frontend:latest .
 ```
 

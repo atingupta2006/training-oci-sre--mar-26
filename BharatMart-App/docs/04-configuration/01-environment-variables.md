@@ -16,7 +16,7 @@ Complete reference of all environment variables, required vs optional, and defau
 
 **Example:**
 ```bash
-SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_URL=https://zdqkotajomqmcfrnxmac.supabase.co
 ```
 
 **Source:** Supabase URL usage in `server/config/supabase.ts` line 17.
@@ -33,7 +33,7 @@ SUPABASE_URL=https://your-project.supabase.co
 
 **Example:**
 ```bash
-SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkcWtvdGFqb21xbWNmcm54bWFjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDMwNzQxMCwiZXhwIjoyMDg5ODgzNDEwfQ.xlThdGsWexYFH3nGIUiU6Yd7stt2v3321GITXcAABzA
 ```
 
 **Source:** Service role key usage in `server/config/supabase.ts` line 18. Validation in lines 28-33.
@@ -388,7 +388,7 @@ SECRETS_PROVIDER=oci-vault
 
 **Example:**
 ```bash
-VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_URL=https://zdqkotajomqmcfrnxmac.supabase.co
 ```
 
 **Source:** Frontend Supabase URL in `src/lib/supabase.ts` line 3.
@@ -403,7 +403,7 @@ VITE_SUPABASE_URL=https://your-project.supabase.co
 
 **Example:**
 ```bash
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkcWtvdGFqb21xbWNmcm54bWFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDc0MTAsImV4cCI6MjA4OTg4MzQxMH0.yloNemspJzogcf20w7nw4CyUlRb8RknH5jqO6Kcy-5k
 ```
 
 **Source:** Frontend Supabase key in `src/lib/supabase.ts` line 4.
@@ -446,10 +446,10 @@ VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ### Minimal Configuration (Development)
 
 ```bash
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=your-service-key
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_URL=https://zdqkotajomqmcfrnxmac.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkcWtvdGFqb21xbWNmcm54bWFjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDMwNzQxMCwiZXhwIjoyMDg5ODgzNDEwfQ.xlThdGsWexYFH3nGIUiU6Yd7stt2v3321GITXcAABzA
+VITE_SUPABASE_URL=https://zdqkotajomqmcfrnxmac.supabase.co
+VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkcWtvdGFqb21xbWNmcm54bWFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDc0MTAsImV4cCI6MjA4OTg4MzQxMH0.yloNemspJzogcf20w7nw4CyUlRb8RknH5jqO6Kcy-5k
 ```
 
 **Source:** Minimal configuration uses Supabase defaults.
@@ -460,8 +460,8 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
 NODE_ENV=production
 PORT=3000
 DATABASE_TYPE=supabase
-SUPABASE_URL=https://your-project.supabase.co
-SUPABASE_SERVICE_ROLE_KEY=your-service-key
+SUPABASE_URL=https://zdqkotajomqmcfrnxmac.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkcWtvdGFqb21xbWNmcm54bWFjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDMwNzQxMCwiZXhwIjoyMDg5ODgzNDEwfQ.xlThdGsWexYFH3nGIUiU6Yd7stt2v3321GITXcAABzA
 WORKER_MODE=bull-queue
 QUEUE_REDIS_URL=redis://queue-host:6379
 CACHE_TYPE=redis

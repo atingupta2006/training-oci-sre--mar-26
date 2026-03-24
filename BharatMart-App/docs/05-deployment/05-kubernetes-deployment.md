@@ -79,7 +79,7 @@ kubectl apply -f deployment/kubernetes/configmap.yaml
 **Create Secrets:**
 ```bash
 kubectl create secret generic bharatmart-secrets \
-  --from-literal=supabase_url=https://your-project.supabase.co \
+  --from-literal=supabase_url=https://zdqkotajomqmcfrnxmac.supabase.co \
   --from-literal=supabase_service_role_key=your-key \
   -n bharatmart
 ```
