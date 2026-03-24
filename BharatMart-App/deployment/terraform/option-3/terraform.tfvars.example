@@ -61,16 +61,16 @@ ssh_ingress_cidr = "0.0.0.0/0"
 # 🚨 MANDATORY: GITHUB REPOSITORY (Your App Code)
 ############################################################
 
-github_repo_url = "https://github.com/your-github-org/oci-multi-tier-web-app-ecommerce.git"
+github_repo_url = "https://github.com/atingupta2006/training-oci-sre--mar-26.git"
 
 
 ############################################################
 # 🚨 MANDATORY: ENVIRONMENT VALUES (Injected Automatically)
 ############################################################
 
-supabase_url              = "https://jqkjjubbihdvlinpcrps.supabase.co"
-supabase_anon_key         = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impxa2pqdWJiaWhkdmxpbnBjcnBzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzOTQwMjksImV4cCI6MjA3OTk3MDAyOX0.o3tuHrVoc3tDTVA47CA3hOl8b3IFAwwmfm99scFm1X4"
-supabase_service_role_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impxa2pqdWJiaWhkdmxpbnBjcnBzIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NDM5NDAyOSwiZXhwIjoyMDc5OTcwMDI5fQ.Y_ujtn1j-exJUQpGKB9XVFlvhrq3EunpnwwhIWgMTFo"
+supabase_url              = "https://zdqkotajomqmcfrnxmac.supabase.co"
+supabase_anon_key         = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkcWtvdGFqb21xbWNmcm54bWFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDc0MTAsImV4cCI6MjA4OTg4MzQxMH0.yloNemspJzogcf20w7nw4CyUlRb8RknH5jqO6Kcy-5k"
+supabase_service_role_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkcWtvdGFqb21xbWNmcm54bWFjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDMwNzQxMCwiZXhwIjoyMDg5ODgzNDEwfQ.xlThdGsWexYFH3nGIUiU6Yd7stt2v3321GITXcAABzA"
 jwt_secret                = "CHANGE_THIS_SECRET_TO_A_SECURE_VALUE"
 
 admin_email    = "admin@bharatmart.com"

@@ -15,7 +15,7 @@ ssh -i ~/.ssh/YOUR_KEY opc@YOUR_VM_PUBLIC_IP
 # ============================================================================
 
 # Navigate to project directory
-cd ~/oci-multi-tier-web-app-ecommerce
+cd ~/training-oci-sre--mar-26/BharatMart-App
 
 # Edit .env file to update FRONTEND_URL and VITE_API_URL with your VM's public IP
 # Get your public IP first:
@@ -44,5 +44,5 @@ npm run dev:server
 
 # In a new terminal/SSH session, start frontend server (runs on port 80)
 # Navigate to project directory again
-cd ~/oci-multi-tier-web-app-ecommerce
+cd ~/training-oci-sre--mar-26/BharatMart-App
 sudo npm run dev -- --host 0.0.0.0 --port 80

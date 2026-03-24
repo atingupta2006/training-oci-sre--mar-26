@@ -36,7 +36,7 @@ ssh -i ~/.ssh/YOUR_KEY opc@BACKEND_VM_IP
 # Once connected to Backend VM, run the following commands:
 
 # Navigate to project directory
-cd ~/oci-multi-tier-web-app-ecommerce
+cd ~/training-oci-sre--mar-26/BharatMart-App
 
 # Copy both-same-app.env to .env
 
@@ -71,7 +71,7 @@ npm run dev:server
 # You should now be back on Frontend VM
 
 # Navigate to project directory
-cd ~/oci-multi-tier-web-app-ecommerce
+cd ~/training-oci-sre--mar-26/BharatMart-App
 
 # Copy both-same-app.env to .env
 
