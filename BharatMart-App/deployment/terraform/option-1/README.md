@@ -141,23 +141,40 @@ After successful deployment, the following outputs are available:
 
 After Terraform creates the infrastructure:
 
-1. **SSH to the Compute instance**:
+1. **Initialize Supabase Database**:
+   - Open your Supabase project's SQL Editor and create the required execution function:
+     ```sql
+     CREATE OR REPLACE FUNCTION public.exec_sql(sql text)
+     RETURNS void
+     LANGUAGE plpgsql
+     SECURITY DEFINER
+     AS $$
+     BEGIN
+       EXECUTE sql;
+     END;
+     $$;
+     ```
+   - From your local machine (inside the cloned repository), run the database init script to create tables and seed products:
+     ```bash
+     npm install
+     npm run db:init
+     ```
+
+2. **SSH to the Compute instance**:
    ```bash
    ssh -i ~/.ssh/your_key opc@<public_ip>
    ```
 
-2. **Deploy BharatMart application**:
-   - Install Node.js (already done via user_data)
-   - Clone repository
-   - Configure environment variables
-   - Start application (both frontend and backend)
+3. **Deploy BharatMart application**:
+   - The repository has already been cloned and dependencies installed by Terraform!
+   - Run the exact copy-paste commands provided in `commands.sh` (located in the `option-1` folder) to instantly configure your IP address, disable the firewall, and start the frontend and backend servers.
 
-3. **Verify Application**:
+4. **Verify Application**:
    ```bash
    curl http://<public_ip>:3000/api/health
    ```
 
-4. **Access Application**:
+5. **Access Application**:
    - Open browser to `http://<public_ip>:3000`
    - API available at `http://<public_ip>:3000/api/*`
 

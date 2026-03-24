@@ -35,16 +35,16 @@ ssh -i ~/.ssh/YOUR_KEY opc@BACKEND_VM_IP
 
 # Once connected to Backend VM, run the following commands:
 
-# Navigate to project directory
-cd ~/training-oci-sre--mar-26/BharatMart-App
+# Navigate to project directory (Wait 1 minute after boot for Terraform to clone the repo)
+cd /home/opc/training-oci-sre--mar-26/BharatMart-App
 
-# Copy both-same-app.env to .env
+# Setup Environment Variables
+cp .env.example .env
 
-
-# Edit .env file to update with Load Balancer public IP
-# FRONTEND_URL should be: http://LB_PUBLIC_IP (from step 1)
-# CORS_ORIGIN should be: http://LB_PUBLIC_IP (from step 1)
-nano .env
+# Automatically update .env with the Load Balancer IP
+# NOTE: Replace 'YOUR_LB_PUBLIC_IP' below with the actual LB IP from step 1
+sed -i "s|FRONTEND_URL=.*|FRONTEND_URL=http://YOUR_LB_PUBLIC_IP|g" .env
+sed -i "s|CORS_ORIGIN=.*|CORS_ORIGIN=http://YOUR_LB_PUBLIC_IP|g" .env
 
 # Configure firewall and networking
 sudo systemctl stop firewalld
@@ -70,14 +70,15 @@ npm run dev:server
 # Exit from Backend VM (type: exit)
 # You should now be back on Frontend VM
 
-# Navigate to project directory
-cd ~/training-oci-sre--mar-26/BharatMart-App
+# Navigate to project directory (Wait 1 minute after boot for Terraform to clone the repo)
+cd /home/opc/training-oci-sre--mar-26/BharatMart-App
 
-# Copy both-same-app.env to .env
+# Setup Environment Variables
+cp .env.example .env
 
-# Edit .env file to update with Load Balancer public IP
-# VITE_API_URL should be: http://LB_PUBLIC_IP:3000/api (from step 1)
-nano .env
+# Automatically update .env with the Load Balancer IP
+# NOTE: Replace 'YOUR_LB_PUBLIC_IP' below with the actual LB IP from step 1
+sed -i "s|VITE_API_URL=.*|VITE_API_URL=http://YOUR_LB_PUBLIC_IP:3000/api|g" .env
 
 # Configure firewall and networking
 sudo systemctl stop firewalld

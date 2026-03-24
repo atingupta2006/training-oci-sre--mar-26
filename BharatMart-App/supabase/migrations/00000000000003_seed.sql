@@ -15,7 +15,9 @@ INSERT INTO public.products
 VALUES
 ('dddddddd-4444-4444-4444-444444444444', 'iPhone 15', 'Apple smartphone', 79999, 'electronics', 20, 'APL-IP15'),
 ('eeeeeeee-5555-5555-5555-555555555555', 'Samsung TV', '55 inch 4K TV', 55999, 'electronics', 15, 'SMS-TV55'),
-('ffffffff-6666-6666-6666-666666666666', 'Nike Shoes', 'Running shoes', 4999, 'fashion', 50, 'NKE-RUN');
+('ffffffff-6666-6666-6666-666666666666', 'Nike Shoes', 'Running shoes', 4999, 'fashion', 50, 'NKE-RUN'),
+('99999999-7777-7777-7777-777777777777', 'Logitech Mouse', 'Wireless ergonomic mouse', 2999, 'electronics', 45, 'LOG-M123'),
+('88888888-8888-8888-8888-888888888888', 'SRE Handbook', 'Site Reliability Engineering Book', 1500, 'books', 100, 'BK-SRE01');
 
 -- ================================
 -- ORDERS

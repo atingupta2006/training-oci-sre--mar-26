@@ -346,35 +346,35 @@ locals {
       - chown -R opc:opc /opt/bharatmart
 
       # Create .env file
-      - bash -c 'echo "${local.app_env_b64}" | base64 -d > /opt/bharatmart/.env'
-      - chown opc:opc /opt/bharatmart/.env
+      - bash -c 'echo "${local.app_env_b64}" | base64 -d > /opt/bharatmart/BharatMart-App/.env'
+      - chown opc:opc /opt/bharatmart/BharatMart-App/.env
 
       # Install dependencies and build (as opc user to avoid permission issues)
       - |
-        cd /opt/bharatmart
-        su - opc -c "cd /opt/bharatmart && npm install" || {
+        cd /opt/bharatmart/BharatMart-App
+        su - opc -c "cd /opt/bharatmart/BharatMart-App && npm install" || {
           echo "npm install failed"
           exit 1
         }
 
       # Build frontend only (not server code)
       - |
-        cd /opt/bharatmart
-        su - opc -c "cd /opt/bharatmart && npm run build:client" || {
+        cd /opt/bharatmart/BharatMart-App
+        su - opc -c "cd /opt/bharatmart/BharatMart-App && npm run build:client" || {
           echo "Frontend build failed"
           exit 1
         }
 
       # Verify dist directory exists
       - |
-        if [ ! -d /opt/bharatmart/dist ] || [ -z "$(ls -A /opt/bharatmart/dist)" ]; then
+        if [ ! -d /opt/bharatmart/BharatMart-App/dist ] || [ -z "$(ls -A /opt/bharatmart/BharatMart-App/dist)" ]; then
           echo "dist directory is empty or missing"
           exit 1
         fi
 
       # Copy files to nginx directory
       - rm -rf /usr/share/nginx/html/*
-      - cp -r /opt/bharatmart/dist/* /usr/share/nginx/html/
+      - cp -r /opt/bharatmart/BharatMart-App/dist/* /usr/share/nginx/html/
       - chown -R nginx:nginx /usr/share/nginx/html/
       - chmod -R 755 /usr/share/nginx/html/
 

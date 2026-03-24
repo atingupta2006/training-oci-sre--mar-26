@@ -220,6 +220,7 @@ async function main() {
     console.log("🆕 Fresh database detected");
 
     await runSQL(BASE_SCHEMA_PATH, "Base Schema");
+    await runSQL(SEED_PATH, "Seed Data");
     await ensureAdminUser();
 
     console.log("✅ DB initialized");

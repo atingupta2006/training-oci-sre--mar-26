@@ -276,6 +276,26 @@ Use one of:
 
 # 🧪 **7. Validate Deployment**
 
+## ✔ Setup Database (First Time Only)
+
+1. Open your Supabase project's SQL Editor and create the required execution function:
+   ```sql
+   CREATE OR REPLACE FUNCTION public.exec_sql(sql text)
+   RETURNS void
+   LANGUAGE plpgsql
+   SECURITY DEFINER
+   AS $$
+   BEGIN
+     EXECUTE sql;
+   END;
+   $$;
+   ```
+2. From your local machine (inside the cloned repository), run the database init script to create tables and seed products:
+   ```bash
+   npm install
+   npm run db:init
+   ```
+
 ## ✔ Frontend UI
 
 Open browser:

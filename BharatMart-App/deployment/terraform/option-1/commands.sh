@@ -14,17 +14,16 @@ ssh -i ~/.ssh/YOUR_KEY opc@YOUR_VM_PUBLIC_IP
 # STEP 3: Once connected to the VM, run the following commands one at a time:
 # ============================================================================
 
-# Navigate to project directory
-cd ~/training-oci-sre--mar-26/BharatMart-App
+# Navigate to project directory (Wait 1 minute after boot for Terraform to clone the repo)
+cd /home/opc/training-oci-sre--mar-26/BharatMart-App
 
-# Edit .env file to update FRONTEND_URL and VITE_API_URL with your VM's public IP
-# Get your public IP first:
-curl -s ifconfig.me
+# Setup Environment Variables
+cp .env.example .env
 
-# Then edit .env and update:
-# FRONTEND_URL=http://YOUR_LB_PUBLIC_IP
-# VITE_API_URL=http://YOUR_LB_PUBLIC_IP:3000
-nano .env
+# Automatically update .env with your VM's public IP
+PUBLIC_IP=$(curl -s ifconfig.me)
+sed -i "s|FRONTEND_URL=.*|FRONTEND_URL=http://$PUBLIC_IP|g" .env
+sed -i "s|VITE_API_URL=.*|VITE_API_URL=http://$PUBLIC_IP:3000|g" .env
 
 # Configure firewall and networking
 sudo systemctl stop firewalld
@@ -44,5 +43,5 @@ npm run dev:server
 
 # In a new terminal/SSH session, start frontend server (runs on port 80)
 # Navigate to project directory again
-cd ~/training-oci-sre--mar-26/BharatMart-App
+cd /home/opc/training-oci-sre--mar-26/BharatMart-App
 sudo npm run dev -- --host 0.0.0.0 --port 80

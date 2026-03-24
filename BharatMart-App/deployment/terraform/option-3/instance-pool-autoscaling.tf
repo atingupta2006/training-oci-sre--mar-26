@@ -87,11 +87,11 @@ locals {
         fi
 
       # Create .env file
-      - bash -c 'echo "${local.app_env_b64}" | base64 -d > /opt/bharatmart/.env'
+      - bash -c 'echo "${local.app_env_b64}" | base64 -d > /opt/bharatmart/BharatMart-App/.env'
 
       # Install dependencies (including dev dependencies for TypeScript)
       - |
-        cd /opt/bharatmart
+        cd /opt/bharatmart/BharatMart-App
         npm install || {
           echo "npm install failed"
           exit 1
@@ -99,7 +99,7 @@ locals {
 
       # Build server code
       - |
-        cd /opt/bharatmart
+        cd /opt/bharatmart/BharatMart-App
         npm run build:server || {
           echo "Server build failed"
           exit 1
@@ -107,7 +107,7 @@ locals {
 
       # Verify dist/server directory exists
       - |
-        if [ ! -f /opt/bharatmart/dist/server/index.js ]; then
+        if [ ! -f /opt/bharatmart/BharatMart-App/dist/server/index.js ]; then
           echo "Server build output not found at dist/server/index.js"
           exit 1
         fi
@@ -115,7 +115,7 @@ locals {
 
       # Create package.json in dist/server to enable CommonJS
       - |
-        cat > /opt/bharatmart/dist/server/package.json << 'PKGEOF'
+        cat > /opt/bharatmart/BharatMart-App/dist/server/package.json << 'PKGEOF'
         {
           "type": "commonjs"
         }
@@ -131,8 +131,8 @@ locals {
 
         [Service]
         Type=simple
-        WorkingDirectory=/opt/bharatmart
-        EnvironmentFile=/opt/bharatmart/.env
+        WorkingDirectory=/opt/bharatmart/BharatMart-App
+        EnvironmentFile=/opt/bharatmart/BharatMart-App/.env
         ExecStart=/usr/bin/node dist/server/index.js
         Restart=always
         RestartSec=5
