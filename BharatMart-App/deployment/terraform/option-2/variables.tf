@@ -177,6 +177,13 @@ variable "otel_traces_sampler" {
   default     = "always_on"
 }
 
+variable "otel_exporter_otlp_headers" {
+  description = "Optional. Comma-separated key=value for OTLP HTTP (values may be URL-encoded). OCI APM example: authorization=dataKey%20<YOUR_APM_DATA_KEY>. Leave empty for local collectors that do not need auth."
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
 ########################
 # IMAGE SELECTION
 ########################

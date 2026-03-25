@@ -44,10 +44,13 @@ ADMIN_EMAIL=${admin_email}
 ADMIN_PASSWORD=${admin_password}
 
 %{ if otel_tracing_enabled ~}
-# ===== OTEL (SDK starts only when OTEL_EXPORTER_OTLP_ENDPOINT is set — see server/tracing.ts) =====
+# ===== OTEL (see server/tracing.ts; optional headers for OCI APM) =====
 OTEL_SERVICE_NAME=${otel_service_name}
 OTEL_EXPORTER_OTLP_ENDPOINT=${otel_otlp_endpoint}
 OTEL_TRACES_SAMPLER=${otel_traces_sampler}
+%{ if otel_exporter_otlp_headers != "" ~}
+OTEL_EXPORTER_OTLP_HEADERS=${otel_exporter_otlp_headers}
+%{ endif ~}
 %{ endif ~}
 
 # ===== CHAOS (LB-safe: skips / and /api/health/*) — see CHAOS_ERROR_RATE in docs/04-configuration/01-environment-variables.md =====

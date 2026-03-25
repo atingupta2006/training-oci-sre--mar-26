@@ -55,11 +55,12 @@ chaos_enabled            = true
 chaos_latency_ms         = 80
 chaos_error_rate         = 0.1
 
-# OTEL traces to OTLP HTTP (disable with otel_tracing_enabled = false if no collector).
-otel_tracing_enabled     = true
-otel_otlp_endpoint       = "http://localhost:4318/v1/traces"
-otel_service_name        = "bharatmart-backend"
-otel_traces_sampler      = "always_on"
+# OTEL — set otel_otlp_endpoint to OCI APM or a collector; optional otel_exporter_otlp_headers for APM data key.
+otel_tracing_enabled       = true
+otel_otlp_endpoint         = "http://localhost:4318/v1/traces"
+otel_service_name          = "bharatmart-backend"
+otel_traces_sampler        = "always_on"
+otel_exporter_otlp_headers   = ""
 
 
 ############################################################

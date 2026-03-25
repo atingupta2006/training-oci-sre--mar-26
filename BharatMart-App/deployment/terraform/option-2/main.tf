@@ -234,10 +234,11 @@ locals {
     chaos_enabled             = var.chaos_enabled
     chaos_latency_ms          = var.chaos_latency_ms
     chaos_error_rate          = var.chaos_error_rate
-    otel_tracing_enabled      = var.otel_tracing_enabled
-    otel_otlp_endpoint        = var.otel_otlp_endpoint
-    otel_service_name         = var.otel_service_name
-    otel_traces_sampler       = var.otel_traces_sampler
+    otel_tracing_enabled         = var.otel_tracing_enabled
+    otel_otlp_endpoint           = var.otel_otlp_endpoint
+    otel_service_name            = var.otel_service_name
+    otel_traces_sampler          = var.otel_traces_sampler
+    otel_exporter_otlp_headers   = var.otel_exporter_otlp_headers
   })
 
   app_env_b64 = base64encode(local.app_env)
