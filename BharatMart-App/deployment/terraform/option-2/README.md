@@ -79,7 +79,7 @@ Provisioning time: typically **4–15 minutes** depending on region and resource
 1. Open the successful **Apply** job → **Outputs** (wording may vary by console version).
 2. Copy outputs you need for SSH and checks: **`load_balancer_public_ip`**, **`frontend_public_ips`**, **`frontend_private_ips`**, **`backend_instance_pool_id`**, **`backend_instance_ids`**, **`bharatmart_summary`** (see **`troubleshooting.md`** for resolving backend **private** IPs from instance OCIDs).
 
-If outputs are not visible, use the **OCI Console** to find the load balancer public IP and instance IPs (see **`troubleshooting.md`** §1.2).
+If outputs are not visible, use the **OCI Console** to find the load balancer public IP and instance IPs (see **`troubleshooting.md`**).
 
 ### **Optional: local Terraform**
 
@@ -151,7 +151,7 @@ backend_instance_ids      = ["ocid1.instance..."]
 bharatmart_summary        = { ... }
 ```
 
-Backend **private** IPs: use each id in **`backend_instance_ids`** with the Console or CLI (**`troubleshooting.md`** §1). If job outputs are missing, use **Networking → Load balancers** and **Compute → Instances**.
+Backend **private** IPs: use each id in **`backend_instance_ids`** with the Console or CLI (**`troubleshooting.md`**, Outputs). If job outputs are missing, use **Networking → Load balancers** and **Compute → Instances**.
 
 ---
 

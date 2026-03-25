@@ -4,6 +4,8 @@
 
 # Trainer-only internal folder (credentials, tools, analysis, Game Day guides)
 _internal/
+**/*.zip
+*.zip
 
 # Supplementary SRE theory reference (optional deep-dive, not core training)
 # Students who want this can access it at: https://github.com/your-org/sre-concepts

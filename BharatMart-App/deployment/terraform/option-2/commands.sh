@@ -28,18 +28,20 @@ APP="${APP:-/opt/bharatmart/BharatMart-App}"
 curl http://LB_PUBLIC_IP
 curl http://LB_PUBLIC_IP:3000/api/health
 
-# STEP 3: Access Frontend VM for Troubleshooting (if needed)
+# STEP 3: Access Frontend VM, then Backend (if needed)
 # ============================================================================
-# Copy SSH keys to Frontend VM (run from your local laptop)
-# Replace YOUR_KEY_PATH with your SSH private key path (e.g., ~/.ssh/id_rsa)
-# Replace FRONTEND_VM_IP with the IP from step 1
-scp -i ~/.ssh/YOUR_KEY ~/.ssh/YOUR_KEY opc@FRONTEND_VM_IP:~/.ssh/
-scp -i ~/.ssh/YOUR_KEY ~/.ssh/YOUR_KEY.pub opc@FRONTEND_VM_IP:~/.ssh/
+# On your laptop: copy the same private key Terraform uses onto the frontend, then SSH.
+# Backend VMs are private — from the frontend, SSH to the backend private IP (see troubleshooting.md Outputs).
+export KEY=~/.ssh/bharatmart_terraform_ed25519
+export FE=<FRONTEND_VM_IP>
+scp -i "$KEY" "$KEY" "opc@${FE}:~/.ssh/"
+ssh -i "$KEY" "opc@${FE}" 'chmod 400 ~/.ssh/bharatmart_terraform_ed25519'
+ssh -i "$KEY" "opc@${FE}"
 
-# Connect to Frontend VM
-ssh -i ~/.ssh/YOUR_KEY opc@FRONTEND_VM_IP
+# On the frontend, to reach a backend:
+# ssh -i ~/.ssh/bharatmart_terraform_ed25519 opc@<BACKEND_PRIVATE_IP>
 
-# Once connected to Frontend VM, run the following commands:
+# Once on a VM, useful checks:
 
 # Check nginx status
 sudo systemctl status nginx
@@ -57,20 +59,12 @@ sudo cat /var/log/cloud-init-output.log
 # Restart nginx if needed
 sudo systemctl restart nginx
 
-# STEP 4: Access Backend Instance Pool Instances (via Frontend VM)
+# STEP 4: Backend VM (from Frontend)
 # ============================================================================
-# From Frontend VM, get backend instance private IPs using OCI CLI
-# First, install OCI CLI if not already installed:
-# bash -c "$(curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh)"
+# Get backend private IP from OCI Console using backend_instance_ids (troubleshooting.md Outputs), then:
+# ssh -i ~/.ssh/bharatmart_terraform_ed25519 opc@<BACKEND_PRIVATE_IP>
 
-# List backend instances in the pool
-oci compute-management instance-pool list-instances --instance-pool-id BACKEND_POOL_ID --compartment-id YOUR_COMPARTMENT_ID
-
-# Get private IP of a backend instance (use the output from above command)
-# Then SSH to backend instance from Frontend VM:
-ssh -i ~/.ssh/YOUR_KEY opc@BACKEND_INSTANCE_PRIVATE_IP
-
-# Once connected to Backend VM, run the following commands:
+# On the backend:
 
 # Check backend service status
 sudo systemctl status bharatmart-backend
