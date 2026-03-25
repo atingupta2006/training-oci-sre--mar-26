@@ -51,7 +51,7 @@ compartment_ocid = "ocid1.compartment.oc1..aaaaaaa..."
 # 🚨 MANDATORY: SSH ACCESS
 ############################################################
 
-ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDFe2RyQy4Rbh0SZfWFqLDys4pidV382bZVFV/pFqzeEuXRF+AuIVcwNWs7p7J27f5PJaGWCLeRN7MxJnXYhm+8Ul7cbLM6chK2qusx2uarTXeqGog6zurAY9RA4n5uX+T5Fc30rvshx14CMnLXC/VHT6khyMRCOrfza52uxUk2A27xuWdq6dL/YIkIut1nLoPRGSUIZwIqJz4f5xNTSf/KSaGsFsItl3e0f19Nhdq4qszI6vFQUDBJAL2NVl5qkrm/9V8OFoB5/lRP3SqK84Z76jb0b3mkCo0raZNIdanl4wBfN6OC6CZYqtjUtdlCC/bdKGYNSoeD0CND0+DE9lEFZpxx2i4Y1EWUKuQsTB4wUYfPaZHZZvUtvJpUd/ts2wG7nLXjtcu54WSRXFjsADojbwW3x44x62cOtskZ/h0oWEpl3vUYJTSTw5uGN3191aewXDEmBlbjV6CbXVtyU/qLdA9nfBnJlIcmB1epbrvzAUY75Qts+5bwhb8s+f/VEjZO9eZZRsUtA/A4L4du269jS44yV1bbxl6VEonFzHIR9kZ8V5c7IkgJ8u0x8qFMjWkvYMLdvEsWK+7+Pppxi+Uh+YxsYmEWzT7aSg+Ucm7sh0xZoCKHOoUL1lXHG9dDhuIcJU5HTeUVlOLEtgaq1Xtn+tWSdxHWGZ9FZoO2yn4z0w== adminuser@ubuntu3"
+ssh_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINI7X5FCn5bWg5VKqEBZLgObJXu172v0ilSI70zWTXUo bharatmart-terraform"
 
 # Restrict if needed
 ssh_ingress_cidr = "0.0.0.0/0"
@@ -71,7 +71,7 @@ github_repo_url = "https://github.com/atingupta2006/training-oci-sre--mar-26.git
 supabase_url              = "https://zdqkotajomqmcfrnxmac.supabase.co"
 supabase_anon_key         = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkcWtvdGFqb21xbWNmcm54bWFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDc0MTAsImV4cCI6MjA4OTg4MzQxMH0.yloNemspJzogcf20w7nw4CyUlRb8RknH5jqO6Kcy-5k"
 supabase_service_role_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkcWtvdGFqb21xbWNmcm54bWFjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDMwNzQxMCwiZXhwIjoyMDg5ODgzNDEwfQ.xlThdGsWexYFH3nGIUiU6Yd7stt2v3321GITXcAABzA"
-jwt_secret                = "CHANGE_THIS_SECRET_TO_A_SECURE_VALUE"
+jwt_secret                = "ySoKyCeGjr/GCrI/6Be2r5nl8GRVlxHLr7md84K7LccKaW2PH0qjql0OnA4gZ35UP0WE1yeIam40v3c0fzeqOA=="
 
 admin_email    = "admin@bharatmart.com"
 admin_password = "Admin@123"

@@ -76,8 +76,9 @@ locals {
         echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf
         sysctl -p
 
-      # Create directory and clone repo
+      # Create directory and clone repo (GitHub app repo root = /opt/bharatmart; no BharatMart-App subfolder)
       - mkdir -p /opt/bharatmart
+      - chown -R opc:opc /opt/bharatmart
       - |
         if [ ! -d /opt/bharatmart/.git ]; then
           git clone --branch main --depth 1 ${var.github_repo_url} /opt/bharatmart || {
@@ -86,28 +87,32 @@ locals {
           }
         fi
 
-      # Create .env file
-      - bash -c 'echo "${local.app_env_b64}" | base64 -d > /opt/bharatmart/BharatMart-App/.env'
+      # Root-owned clone → opc before .env and npm (same pattern as frontend cloud-init)
+      - chown -R opc:opc /opt/bharatmart
 
-      # Install dependencies (including dev dependencies for TypeScript)
+      # Create .env file
+      - bash -c 'echo "${local.app_env_b64}" | base64 -d > /opt/bharatmart/.env'
+      - chown opc:opc /opt/bharatmart/.env
+
+      # Install dependencies and build as opc — root npm causes idealTree / permission issues
       - |
-        cd /opt/bharatmart/BharatMart-App
-        npm install || {
+        cd /opt/bharatmart
+        su - opc -c "cd /opt/bharatmart && npm install" || {
           echo "npm install failed"
           exit 1
         }
 
       # Build server code
       - |
-        cd /opt/bharatmart/BharatMart-App
-        npm run build:server || {
+        cd /opt/bharatmart
+        su - opc -c "cd /opt/bharatmart && npm run build:server" || {
           echo "Server build failed"
           exit 1
         }
 
       # Verify dist/server directory exists
       - |
-        if [ ! -f /opt/bharatmart/BharatMart-App/dist/server/index.js ]; then
+        if [ ! -f /opt/bharatmart/dist/server/index.js ]; then
           echo "Server build output not found at dist/server/index.js"
           exit 1
         fi
@@ -115,11 +120,12 @@ locals {
 
       # Create package.json in dist/server to enable CommonJS
       - |
-        cat > /opt/bharatmart/BharatMart-App/dist/server/package.json << 'PKGEOF'
+        cat > /opt/bharatmart/dist/server/package.json << 'PKGEOF'
         {
           "type": "commonjs"
         }
         PKGEOF
+        chown opc:opc /opt/bharatmart/dist/server/package.json
         echo "Created package.json in dist/server to enable CommonJS"
 
       # Create systemd service
@@ -131,8 +137,8 @@ locals {
 
         [Service]
         Type=simple
-        WorkingDirectory=/opt/bharatmart/BharatMart-App
-        EnvironmentFile=/opt/bharatmart/BharatMart-App/.env
+        WorkingDirectory=/opt/bharatmart
+        EnvironmentFile=/opt/bharatmart/.env
         ExecStart=/usr/bin/node dist/server/index.js
         Restart=always
         RestartSec=5
@@ -162,10 +168,10 @@ locals {
           exit 1
         fi
 
-      # Verify service is listening on port 3000
+      # Verify service is listening on port 3000 (ss is always present on OL9)
       - |
         for i in {1..30}; do
-          if netstat -tlnp | grep -q ":3000 "; then
+          if ss -tlnp | grep -q ":3000"; then
             echo "Backend service is listening on port 3000"
             break
           fi

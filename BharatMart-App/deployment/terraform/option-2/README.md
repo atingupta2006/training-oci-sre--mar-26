@@ -86,6 +86,12 @@ Provisioning time: **4–10 minutes**
 
 ---
 
+### Cloud-init and `github_repo_url`
+
+User-data clones **`github_repo_url`** into **`/opt/bharatmart`**. The app must live at the **repository root** (e.g. `package.json` at the top level), matching the default `oci-multi-tier-web-app-ecommerce` layout. Frontend and backend scripts run **`npm install`** and builds as user **`opc`** under that directory. If you change the repo URL, ensure the layout matches; do not assume a `BharatMart-App/` subfolder unless your repo actually contains that path.
+
+---
+
 # 🌐 **4. What This Project Creates**
 
 ## **Networking**

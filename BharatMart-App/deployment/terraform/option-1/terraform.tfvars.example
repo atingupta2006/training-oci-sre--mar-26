@@ -9,7 +9,7 @@ ssh_public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQ..."
 # Optional Variables (with defaults)
 region                      = "ap-mumbai-1"
 availability_domain         = "AD-1"
-project_name                = "bharatmart"
+projwt_secret                = "ySoKyCeGjr/GCrI/6Be2r5nl8GRVlxHLr7md84K7LccKaW2PH0qjql0OnA4gZ35UP0WE1yeIam40v3c0fzeqOA=="
 environment                 = "dev"
 vcn_cidr                    = "10.0.0.0/16"
 public_subnet_cidr          = "10.0.1.0/24"
