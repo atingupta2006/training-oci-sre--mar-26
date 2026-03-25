@@ -91,9 +91,15 @@ These logs help SREs:
 
 Ingest BharatMart application logs into OCI Logging Service.
 
-### Steps:
+Complete the steps below **in order**. **Task 1** confirms that system logs reach OCI Logging for your instance; resolve that before depending on custom log ingestion.
 
-#### Step 1: Create OCI Log Group and Log
+1. Finish **Task 1** (system logs).
+2. On the Compute instance that writes **`api.log`** (typically a **backend** instance when using load-balanced option 2), enable **Oracle Cloud Agent** and the relevant **plugin** for custom log files in the Console.
+3. Create the **Custom Log** resource, then attach the log file (Console workflow if your environment provides it, otherwise SSH as in Step 3 below).
+
+---
+
+### Step 1: Create OCI Log Group and Log (if not already done)
 
 1. Go to **OCI Console → Observability & Management → Logging → Log Groups**
 2. Click **Create Log Group** (name: `<student-id>-log-group` or use existing)
@@ -101,26 +107,45 @@ Ingest BharatMart application logs into OCI Logging Service.
    - Name: `<student-id>-bharatmart-api-log`
    - Log Type: Custom Log
    - Click **Create**
+4. Copy the **Log OCID** from the log details page (needed for agent configuration).
 
-#### Step 2: Configure OCI Cloud Agent for Log Collection
+---
 
-1. **SSH to your Compute instance:**
+### Step 2: Enable Oracle Cloud Agent plugins (Console)
+
+On the **same** Compute instance where the API runs and `api.log` is written:
+
+1. **☰ → Compute → Instances** → open that instance.
+2. Under **Resources**, open **Oracle Cloud Agent** (wording may be **Monitoring** or **Management** depending on UI version).
+3. Ensure the **Oracle Cloud Agent** service is **enabled / running**.
+4. Under **Plugins**, enable the plugin used for **custom log file** collection — commonly named **Custom Logs** or **Logging** (exact label varies by region and image).
+5. Save. Wait **1–2 minutes** and confirm the plugin shows **Enabled**.
+
+---
+
+### Step 3: Bind the application log file to the Custom Log
+
+**Option A — Console:**  
+If the Console offers a workflow to register a **log source** (file path and log association) without editing JSON, use it and skip Option B.
+
+**Option B — SSH + agent configuration:**
+
+1. **SSH to the instance** (see **`notes-terraform-option-2.md`** for jump host to backend if needed):
    ```bash
    ssh -i ~/.ssh/your-key opc@<instance-ip>
    ```
 
-2. **Verify Cloud Agent is installed:**
+2. **Verify the logging agent service** (name may vary; common on Oracle Linux images):
    ```bash
    systemctl status unified-monitoring-agent
    ```
 
-3. **Configure log source:**
-   Edit Cloud Agent logging configuration:
+3. **Configure the log source** (Cloud Agent logging plugin — path may differ by image):
    ```bash
    sudo nano /opt/oracle-cloud-agent/plugins/logging/config.json
    ```
 
-   Add log source configuration:
+   Add or merge a **logSources** entry like:
    ```json
    {
      "logSources": [
@@ -135,19 +160,21 @@ Ingest BharatMart application logs into OCI Logging Service.
    ```
 
    Replace:
-   - `<LOG_OCID>` with the OCID of the Log you created (found in Log details)
+   - `<LOG_OCID>` with the Custom Log OCID from Step 1.
    - **`/opt/bharatmart/BharatMart-App/logs/api.log`** for Terraform option 2 with the training repo (`app_source_subpath = "BharatMart-App"`), unless `LOG_FILE` in `.env` overrides it.
-   
-   **Log Path Guidance:**
-   - Resolve **`LOG_FILE`** from the app `.env` on the VM (default relative path is under the app root).
-   - See **`BharatMart-App/docs/06-observability/08-oci-cloud-agent-setup.md`** for more Cloud Agent detail.
 
-4. **Restart Cloud Agent:**
+   **Log path:** Confirm with `grep LOG_FILE /opt/bharatmart/BharatMart-App/.env` and `ls -la` on the resolved file — the agent must read a path that **exists** and receives new lines.
+
+4. **Restart the agent** (if the Console did not restart it automatically):
    ```bash
    sudo systemctl restart unified-monitoring-agent
    ```
 
-#### Step 3: Verify Log Collection
+5. **Reference:** **`BharatMart-App/docs/06-observability/08-oci-cloud-agent-setup.md`** for more detail and image-specific notes.
+
+---
+
+### Step 4: Verify log collection
 
 1. Generate log entries (on the **backend** VM, or from your laptop against the **load balancer**):
    ```bash
@@ -157,7 +184,9 @@ Ingest BharatMart application logs into OCI Logging Service.
    ```
    From a laptop (replace with your LB IP): `export API=http://<LB_IP>:3000` then the same `curl` lines.
 
-2. Wait 2-3 minutes for logs to be ingested
+2. Wait **2–5 minutes** for logs to appear (longer immediately after plugin or configuration changes).
+
+**If no lines appear:** Check that Task 1 shows system log activity, that the plugin is **Enabled** on the correct instance (usually the backend), and that the log file path and permissions are correct. Allow several minutes before retesting. Additional agent troubleshooting: **`../Day-4/enable-logs-via-agent.md`**.
 
 ---
 
@@ -229,7 +258,7 @@ In this exercise, you learned how to:
 
 * Understand monitoring vs observability
 * Enable system logs on a compute instance
-* Configure application log ingestion via OCI Cloud Agent
+* Configure application log ingestion (Oracle Cloud Agent plugins, then log file binding)
 * Use OCI Logging to search, filter, and read logs
 * Analyze log patterns for troubleshooting
 
@@ -237,45 +266,45 @@ These form the foundation for debugging, incident resolution, and SLO validation
 
 ---
 
-## 8. Solutions Key (Instructor Reference)
+## 8. Appendix — Expected results
 
-### ✔ Solution Key — Task 1: Enable System Logs
+### Task 1: System logs
 
-#### Expected Settings:
+#### Settings:
 
 * Log Group: `<student-id>-log-group`
 * Log Name: `<student-id>-syslog`
 * Source: System Logs
 * Status: **Active**
 
-#### Expected Student Outcome:
+#### Outcome:
 
 * VM syslog entries appear within minutes
 * Log group shows new log stream
 
-### ✔ Solution Key — Task 2: Application Log Ingestion
+### Task 2: Application log ingestion
 
-#### Expected Configuration:
+#### Configuration:
 
 * Log created: `<student-id>-bharatmart-api-log`
-* Cloud Agent configured with log path
-* Agent restarted successfully
+* Oracle Cloud Agent plugins enabled (Custom Logs / equivalent)
+* Custom Log OCID bound to correct **backend** file path; agent restarted if needed
 
-#### Expected Outcome:
+#### Outcome:
 
-* Application log entries appear in OCI Logging within 2-3 minutes
+* Application log entries appear in OCI Logging within a few minutes
 * Structured JSON logs parsed correctly
 
-### ✔ Solution Key — Task 3: Log Search
+### Task 3: Log search
 
-#### Expected Working Queries:
+#### Example queries:
 
 * `level = 'ERROR'` → shows system errors
 * `level = 'error'` → shows application errors
 * `path = '/api/orders'` → shows order API logs
 * `status_code >= 500` → shows server errors
 
-### Why This Matters:
+### Using these results
 
 These logs:
 

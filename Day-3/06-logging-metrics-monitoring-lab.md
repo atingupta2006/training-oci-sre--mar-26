@@ -1,6 +1,6 @@
 # Day 3: Logging metrics → OCI Monitoring → Dashboard — Hands-on Lab
 
-**Prerequisites:** Log group and application log exist (**lab 05**). Logs flowing to OCI. Compartment access.
+**Prerequisites:** **Lab 05** completed through application log ingestion. **Logging → Search** should return lines from the BharatMart application log (not only system logs). Compartment access.
 
 > **Terraform option 2:** See **`notes-terraform-option-2.md`** (LB URL, log path, **`path`** in JSON logs). Use namespace **`oci_logging`** for log-derived metrics in Metric Explorer.
 
