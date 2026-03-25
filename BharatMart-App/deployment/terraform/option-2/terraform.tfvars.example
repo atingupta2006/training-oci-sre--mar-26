@@ -33,7 +33,9 @@ ssh_ingress_cidr = "0.0.0.0/0"
 # 🚨 MANDATORY: GITHUB REPOSITORY (Your App Code)
 ############################################################
 
-github_repo_url = "https://github.com/atingupta2006/training-oci-sre--mar-26.git"
+# Training repo nests the app under BharatMart-App/. For a flat repo (package.json at root), set app_source_subpath = ""
+github_repo_url    = "https://github.com/atingupta2006/training-oci-sre--mar-26.git"
+app_source_subpath = "BharatMart-App"
 
 
 ############################################################

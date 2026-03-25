@@ -87,9 +87,14 @@ Advanced users may run `terraform init` / `plan` / `apply` on a VM with OCI cred
 
 ---
 
-### Cloud-init and `github_repo_url`
+### Cloud-init, `github_repo_url`, and `app_source_subpath`
 
-User-data clones **`github_repo_url`** into **`/opt/bharatmart`**. The app must live at the **repository root** (e.g. `package.json` at the top level), matching the default `oci-multi-tier-web-app-ecommerce` layout. Frontend and backend scripts run **`npm install`** and builds as user **`opc`** under that directory. If you change the repo URL, ensure the layout matches; do not assume a `BharatMart-App/` subfolder unless your repo actually contains that path.
+User-data clones **`github_repo_url`** into **`/opt/bharatmart`** (the Git working tree). Set **`app_source_subpath`** to the folder that contains **`package.json`** relative to that clone:
+
+- **`training-oci-sre--mar-26`** (course repo): use **`app_source_subpath = "BharatMart-App"`** so the app path is **`/opt/bharatmart/BharatMart-App`**.
+- **Flat repos** (e.g. `oci-multi-tier-web-app-ecommerce`, `package.json` at repo root): use **`app_source_subpath = ""`** (default) so the app path is **`/opt/bharatmart`**.
+
+Frontend and backend cloud-init run **`npm install`** and builds as user **`opc`** under that app directory.
 
 ---
 

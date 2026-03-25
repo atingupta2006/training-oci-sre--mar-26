@@ -11,6 +11,9 @@ data "oci_identity_availability_domains" "ads" {
 }
 
 locals {
+  # Clone root is always /opt/bharatmart; app may be nested (e.g. training repo → BharatMart-App/)
+  app_root = var.app_source_subpath != "" ? "/opt/bharatmart/${var.app_source_subpath}" : "/opt/bharatmart"
+
   ad_names = [for ad in data.oci_identity_availability_domains.ads.availability_domains : ad.name]
   ad_count = length(local.ad_names)
 
@@ -317,35 +320,35 @@ locals {
       - chown -R opc:opc /opt/bharatmart
 
       # Create .env file
-      - bash -c 'echo "${local.app_env_b64}" | base64 -d > /opt/bharatmart/.env'
-      - chown opc:opc /opt/bharatmart/.env
+      - bash -c 'echo "${local.app_env_b64}" | base64 -d > ${local.app_root}/.env'
+      - chown opc:opc ${local.app_root}/.env
 
       # Install dependencies and build (as opc user to avoid permission issues)
       - |
-        cd /opt/bharatmart
-        su - opc -c "cd /opt/bharatmart && npm install" || {
+        cd ${local.app_root}
+        su - opc -c "cd ${local.app_root} && npm install" || {
           echo "npm install failed"
           exit 1
         }
 
       # Build frontend only (not server code)
       - |
-        cd /opt/bharatmart
-        su - opc -c "cd /opt/bharatmart && npm run build:client" || {
+        cd ${local.app_root}
+        su - opc -c "cd ${local.app_root} && npm run build:client" || {
           echo "Frontend build failed"
           exit 1
         }
 
       # Verify dist directory exists
       - |
-        if [ ! -d /opt/bharatmart/dist ] || [ -z "$(ls -A /opt/bharatmart/dist)" ]; then
+        if [ ! -d ${local.app_root}/dist ] || [ -z "$(ls -A ${local.app_root}/dist)" ]; then
           echo "dist directory is empty or missing"
           exit 1
         fi
 
       # Copy files to nginx directory
       - rm -rf /usr/share/nginx/html/*
-      - cp -r /opt/bharatmart/dist/* /usr/share/nginx/html/
+      - cp -r ${local.app_root}/dist/* /usr/share/nginx/html/
       - chown -R nginx:nginx /usr/share/nginx/html/
       - chmod -R 755 /usr/share/nginx/html/
 

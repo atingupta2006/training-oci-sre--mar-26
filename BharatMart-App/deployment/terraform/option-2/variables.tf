@@ -85,6 +85,12 @@ variable "github_repo_url" {
   type        = string
 }
 
+variable "app_source_subpath" {
+  description = "Directory under the clone root (/opt/bharatmart) where package.json lives. Empty string = app at repo root (e.g. oci-multi-tier-web-app-ecommerce). Use 'BharatMart-App' for github.com/.../training-oci-sre--mar-26."
+  type        = string
+  default     = ""
+}
+
 ########################
 # ENVIRONMENT VARIABLES (split instead of giant .env)
 ########################

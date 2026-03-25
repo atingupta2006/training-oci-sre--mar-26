@@ -1,6 +1,6 @@
 # Option 2 — Troubleshooting
 
-Flow: **stack outputs → load balancer checks → SSH frontend → SSH backend**. App root on VMs: **`/opt/bharatmart`**.
+Flow: **stack outputs → load balancer checks → SSH frontend → SSH backend**. The repo is cloned to **`/opt/bharatmart`**. The **app root** (where **`package.json`** and **`.env`** live) is **`/opt/bharatmart`** when `app_source_subpath` is empty, or **`/opt/bharatmart/<app_source_subpath>`** (e.g. **`/opt/bharatmart/BharatMart-App`**) for the training repo.
 
 ---
 
@@ -127,7 +127,8 @@ sudo grep -iE 'npm install failed|Frontend deployment|Failed to clone|Nginx fail
 sudo systemctl is-active nginx
 curl -sS -o /dev/null -w "%{http_code}\n" http://127.0.0.1/
 ls -la /usr/share/nginx/html/ | head
-ls -la /opt/bharatmart/package.json /opt/bharatmart/dist 2>/dev/null
+ls -la /opt/bharatmart/BharatMart-App/package.json /opt/bharatmart/BharatMart-App/dist 2>/dev/null
+# If app_source_subpath is empty, use /opt/bharatmart/package.json and /opt/bharatmart/dist instead.
 sudo tail -20 /var/log/nginx/error.log
 ```
 
@@ -135,12 +136,14 @@ sudo tail -20 /var/log/nginx/error.log
 
 ## 7. Frontend — manual repair (if user-data failed)
 
-As **`opc`**, from `/opt/bharatmart`:
+As **`opc`**, from your **app root** (set `APP` to match your `app_source_subpath`; training repo example below):
 
 ```bash
-cd /opt/bharatmart
+APP=/opt/bharatmart/BharatMart-App   # or /opt/bharatmart if package.json is at clone root
+cd "$APP"
 test -f .env || echo "WARNING: missing .env"
 npm install && npm run build:client
+# To update code: cd /opt/bharatmart && git pull && cd "$APP" && npm install && npm run build:client
 sudo rm -rf /usr/share/nginx/html/*
 sudo cp -r dist/* /usr/share/nginx/html/
 sudo chown -R nginx:nginx /usr/share/nginx/html/
@@ -169,7 +172,8 @@ curl -sS http://127.0.0.1:3000/api/health
 **Manual repair (sketch):**
 
 ```bash
-cd /opt/bharatmart
+APP=/opt/bharatmart/BharatMart-App   # or /opt/bharatmart if app at repo root
+cd "$APP"
 sudo -u opc npm install
 sudo -u opc npm run build:server
 sudo chown -R opc:opc /opt/bharatmart
@@ -206,10 +210,11 @@ sudo systemctl restart bharatmart-backend
 
 | Item | Path |
 |------|------|
-| App | `/opt/bharatmart` |
+| Git clone | `/opt/bharatmart` |
+| App (npm, `.env`, `dist`) | `/opt/bharatmart` or `/opt/bharatmart/BharatMart-App` per `app_source_subpath` |
 | Nginx root | `/usr/share/nginx/html/` |
 | Backend unit | `bharatmart-backend.service` |
 | API port | `3000` (default) |
-| Env | `/opt/bharatmart/.env` |
+| Env | next to `package.json` (`$APP/.env`) |
 
 See also `commands.sh` in this folder.

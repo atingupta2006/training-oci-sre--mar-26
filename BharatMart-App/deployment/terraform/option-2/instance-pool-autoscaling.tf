@@ -76,7 +76,7 @@ locals {
         echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf
         sysctl -p
 
-      # Create directory and clone repo (GitHub app repo root = /opt/bharatmart; no BharatMart-App subfolder)
+      # Create directory and clone repo (app dir = ${local.app_root} when app_source_subpath is set)
       - mkdir -p /opt/bharatmart
       - chown -R opc:opc /opt/bharatmart
       - |
@@ -91,28 +91,28 @@ locals {
       - chown -R opc:opc /opt/bharatmart
 
       # Create .env file
-      - bash -c 'echo "${local.app_env_b64}" | base64 -d > /opt/bharatmart/.env'
-      - chown opc:opc /opt/bharatmart/.env
+      - bash -c 'echo "${local.app_env_b64}" | base64 -d > ${local.app_root}/.env'
+      - chown opc:opc ${local.app_root}/.env
 
       # Install dependencies and build as opc — root npm causes idealTree / permission issues
       - |
-        cd /opt/bharatmart
-        su - opc -c "cd /opt/bharatmart && npm install" || {
+        cd ${local.app_root}
+        su - opc -c "cd ${local.app_root} && npm install" || {
           echo "npm install failed"
           exit 1
         }
 
       # Build server code
       - |
-        cd /opt/bharatmart
-        su - opc -c "cd /opt/bharatmart && npm run build:server" || {
+        cd ${local.app_root}
+        su - opc -c "cd ${local.app_root} && npm run build:server" || {
           echo "Server build failed"
           exit 1
         }
 
       # Verify dist/server directory exists
       - |
-        if [ ! -f /opt/bharatmart/dist/server/index.js ]; then
+        if [ ! -f ${local.app_root}/dist/server/index.js ]; then
           echo "Server build output not found at dist/server/index.js"
           exit 1
         fi
@@ -120,12 +120,12 @@ locals {
 
       # Create package.json in dist/server to enable CommonJS
       - |
-        cat > /opt/bharatmart/dist/server/package.json << 'PKGEOF'
+        cat > ${local.app_root}/dist/server/package.json << 'PKGEOF'
         {
           "type": "commonjs"
         }
         PKGEOF
-        chown opc:opc /opt/bharatmart/dist/server/package.json
+        chown opc:opc ${local.app_root}/dist/server/package.json
         echo "Created package.json in dist/server to enable CommonJS"
 
       # Create systemd service
@@ -137,8 +137,8 @@ locals {
 
         [Service]
         Type=simple
-        WorkingDirectory=/opt/bharatmart
-        EnvironmentFile=/opt/bharatmart/.env
+        WorkingDirectory=${local.app_root}
+        EnvironmentFile=${local.app_root}/.env
         ExecStart=/usr/bin/node dist/server/index.js
         Restart=always
         RestartSec=5
