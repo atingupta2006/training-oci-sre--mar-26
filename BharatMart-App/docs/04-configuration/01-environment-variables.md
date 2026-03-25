@@ -276,36 +276,6 @@ LOG_FILE=/var/log/bharatmart/api.log
 
 **Source:** Log file path in `server/config/logger.ts` lines 13-15.
 
-#### OTEL_EXPORTER_OTLP_ENDPOINT
-
-**Type:** URL (string)
-
-**Required:** No (tracing is optional)
-
-**Purpose:** OpenTelemetry OTLP collector endpoint
-
-**Example:**
-```bash
-OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318/v1/traces
-```
-
-**Source:** OTLP endpoint in `server/tracing.ts` line 13.
-
-#### OTEL_SERVICE_NAME
-
-**Type:** String
-
-**Default:** `bharatmart-backend`
-
-**Purpose:** Service name for traces
-
-**Example:**
-```bash
-OTEL_SERVICE_NAME=bharatmart-api
-```
-
-**Source:** Service name in `server/tracing.ts` line 12.
-
 ### Chaos Engineering Configuration
 
 #### CHAOS_ENABLED
@@ -442,8 +412,6 @@ VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
 ### Observability Variables
 - `LOG_LEVEL`
 - `LOG_FILE`
-- `OTEL_EXPORTER_OTLP_ENDPOINT`
-- `OTEL_SERVICE_NAME`
 
 ### Chaos Variables
 - `CHAOS_ENABLED`
@@ -512,7 +480,6 @@ All defaults are defined in:
 - `server/config/logger.ts` - Logging defaults
 - `server/config/redis.ts` - Redis defaults
 - `server/config/queue.ts` - Queue defaults
-- `server/tracing.ts` - Tracing defaults
 
 **Source:** Default values in respective configuration files.
 

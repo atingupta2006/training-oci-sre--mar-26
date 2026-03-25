@@ -48,7 +48,6 @@ Complete troubleshooting guide for common issues and solutions.
 
 - Metrics not appearing
 - Logs not generating
-- Traces not collected
 
 **Source:** Observability-related issues.
 

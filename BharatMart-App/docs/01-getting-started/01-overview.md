@@ -11,7 +11,7 @@ BharatMart is a multi-tier e-commerce application built with:
 - **Database:** Supabase (managed PostgreSQL) with adapter support for PostgreSQL and OCI Autonomous
 - **Cache:** Memory or Redis (configurable)
 - **Queue:** In-process, Bull Queue with Redis, or OCI Queue (configurable)
-- **Observability:** Prometheus metrics, Winston logging, OpenTelemetry tracing
+- **Observability:** Prometheus metrics and Winston logging
 - **Chaos Engineering:** Built-in latency injection and failure simulation
 
 ## Key Features
@@ -20,7 +20,7 @@ BharatMart is a multi-tier e-commerce application built with:
 
 - **Multi-Tier Architecture:** Frontend, API Gateway, Database, Cache, Workers, Observability
 - **Adapter Pattern:** Switch databases, caches, queues via environment variables
-- **Full Observability:** Metrics, logs, and distributed tracing
+- **Full Observability:** Metrics and structured logs
 - **Background Workers:** Email, order processing, and payment workers
 - **Auto-Scaling Ready:** Supports single-VM, multi-tier, and Kubernetes deployments
 - **Health Checks:** Liveness and readiness probes for orchestration
@@ -31,7 +31,7 @@ BharatMart is a multi-tier e-commerce application built with:
 - **Incident Simulation:** Pre-built scenarios for training
 - **Comprehensive Testing:** E2E test suite covering all system components
 - **Release Gates:** Automated SRE validation script
-- **Observability Labs:** Hands-on exercises with metrics, logs, and traces
+- **Observability Labs:** Hands-on exercises with metrics and logs
 
 ## Use Cases
 
@@ -52,7 +52,7 @@ For production use:
 
 - **Security:** Supabase Auth with Row Level Security (RLS)
 - **Reliability:** Retry mechanisms, circuit breakers, error handling
-- **Observability:** Full metrics, logging, and tracing
+- **Observability:** Full metrics and logging
 - **Scalability:** Auto-scaling support for all tiers
 - **Deployment:** Multiple deployment modes (VM, Docker, Kubernetes)
 
@@ -85,14 +85,12 @@ For production use:
 - TypeScript
 - Winston (logging)
 - Prometheus Client (metrics)
-- OpenTelemetry (tracing)
 
 **Infrastructure:**
 - Supabase (database & auth)
 - Redis (cache & queue)
 - Bull Queue (job processing)
 - Prometheus (metrics)
-- OpenTelemetry (tracing)
 
 ## Code-Driven Documentation
 

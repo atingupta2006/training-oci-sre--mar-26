@@ -63,9 +63,6 @@ Complete reference of acronyms used in the BharatMart platform.
 ### OCI
 **Oracle Cloud Infrastructure**
 
-### OTLP
-**OpenTelemetry Protocol**
-
 ## P
 
 ### PIR

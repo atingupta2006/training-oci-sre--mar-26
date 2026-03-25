@@ -31,7 +31,7 @@ Check that the API answers before you work only in the Console.
 1. **Full payload:** `curl -sS "${API}/api/system/info" | jq '.'`
 2. **Deployment:** `curl -sS "${API}/api/system/info" | jq '.deployment'`
 3. **Health block:** `curl -sS "${API}/api/system/info" | jq '.services'`
-4. **Flags (metrics, chaos, tracing):** `curl -sS "${API}/api/system/info" | jq '.features'`
+4. **Flags (metrics, chaos):** `curl -sS "${API}/api/system/info" | jq '.features'`
 
 **Optional — Prometheus scrape (from laptop or VM):** `curl -sS "${API}/metrics" | head`
 

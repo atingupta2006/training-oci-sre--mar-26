@@ -7,7 +7,7 @@ import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { Resource } from '@opentelemetry/resources';
 import { SEMRESATTRS_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 
-/** OTEL_EXPORTER_OTLP_HEADERS: comma-separated key=value pairs (values may be URL-encoded). Required for OCI APM (authorization=dataKey%20xxx). */
+/** Optional exporter headers: comma-separated key=value (values may be URL-encoded). */
 function parseOtlpHeaders(): Record<string, string> | undefined {
   const raw = process.env.OTEL_EXPORTER_OTLP_HEADERS;
   if (!raw?.trim()) return undefined;
@@ -45,8 +45,8 @@ if (otlpEndpoint) {
 
   try {
     sdk.start();
-    console.log(`OpenTelemetry tracing: ${serviceName} -> ${otlpEndpoint}`);
+    console.log(`Tracing: ${serviceName} -> ${otlpEndpoint}`);
   } catch (err) {
-    console.error('OpenTelemetry init failed:', err);
+    console.error('Tracing init failed:', err);
   }
 }

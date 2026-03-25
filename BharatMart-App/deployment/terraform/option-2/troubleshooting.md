@@ -121,14 +121,11 @@ Fix the VM (§3–4), then confirm **Networking → Load balancers →** your LB
 | `cloud-init` / `npm` errors | §3 or §4 logs |
 | Permission errors | Run **`npm`** as **`opc`**, not root |
 | Random **500** on API routes (not on `/` or `/api/health*`) | **Chaos:** set `chaos_error_rate = 0` or `chaos_enabled = false` in `terraform.tfvars`, apply, and replace `.env` / reprovision (see §7) |
-| OTLP / export errors in **journalctl** | **OTEL:** no collector on VM at `localhost:4318` unless you install one — set `otel_tracing_enabled = false` or point `otel_otlp_endpoint` at OCI APM / a real collector |
 
 More copy-paste commands: `commands.sh` in this folder.
 
 ---
 
-## 7. Chaos and OpenTelemetry (expected behaviour)
+## 7. Chaos (expected behaviour)
 
 **Chaos** (`CHAOS_ENABLED`, `CHAOS_ERROR_RATE`, `CHAOS_LATENCY_MS` in `.env`): when enabled with `chaos_error_rate > 0`, a fraction of requests to normal API routes return **500** on purpose. **`/`** and **`/api/health*`** are excluded so load balancer probes stay healthy. For a stable demo, use `chaos_error_rate = 0` (and optionally `chaos_enabled = false` or `chaos_latency_ms = 0`).
-
-**OpenTelemetry:** with `otel_tracing_enabled = true` and the default `http://localhost:4318/v1/traces`, nothing receives traces unless you run an OTLP collector on each backend VM. The API still runs; you may see failed export messages in logs. Disable with `otel_tracing_enabled = false` or configure a real endpoint (e.g. OCI APM — see `Day-2/notes-terraform-option-2.md`).

@@ -17,7 +17,7 @@ Layer 4: Cache (Memory/Redis)
     ↓
 Layer 5: Workers (In-Process/Bull Queue)
     ↓
-Layer 6: Observability (Prometheus/OTLP)
+Layer 6: Observability (Prometheus + logs)
 ```
 
 **Source:** Architecture derived from component structure and deployment configuration.
@@ -121,7 +121,6 @@ Layer 6: Observability (Prometheus/OTLP)
 **Components:**
 - **Metrics:** Prometheus (`server/config/metrics.ts`)
 - **Logging:** Winston (`server/config/logger.ts`)
-- **Tracing:** OpenTelemetry (`server/tracing.ts`)
 
 **Endpoints:**
 - `GET /metrics` - Prometheus metrics
@@ -200,7 +199,6 @@ Layer 6: Observability (Prometheus/OTLP)
 - **TypeScript 5.5** - Type safety
 - **Winston 3.11** - Logging
 - **prom-client 15.1** - Metrics
-- **@opentelemetry/sdk-node 0.51.0** - Tracing
 - **Bull 4.16** - Job queue
 - **ioredis 5.8** - Redis client
 - **@supabase/supabase-js 2.57.4** - Supabase client

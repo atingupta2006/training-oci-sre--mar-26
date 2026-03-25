@@ -1,6 +1,6 @@
 # BharatMart - SRE Training Platform
 DevOps quickstart: see `devops/README.md` for OCI DevOps Console steps to create the Build pipeline.
-Production-grade Node.js + Express + Supabase + Redis + Prometheus + OpenTelemetry + Chaos Engineering SRE training platform.
+Production-grade Node.js + Express + Supabase + Redis + Prometheus + Chaos Engineering SRE training platform.
 
 ## Overview
 
@@ -8,7 +8,7 @@ BharatMart is a comprehensive e-commerce platform designed specifically for Site
 
 **Key Features:**
 - Multi-tier architecture with configurable adapters
-- Complete observability stack (metrics, logs, traces)
+- Complete observability stack (metrics and structured logs)
 - Chaos engineering for resilience testing
 - Comprehensive E2E test suite
 - Multiple deployment modes (single-VM, multi-tier, Kubernetes)
@@ -91,10 +91,9 @@ Complete documentation is available in the `docs/` directory:
 - [Terraform Deployments](deployment/terraform/README.md) - OCI infrastructure setup (Single VM & Auto-Scaling)
 
 ### Observability
-- [Observability Overview](docs/06-observability/01-observability-overview.md) - Three pillars
+- [Observability Overview](docs/06-observability/01-observability-overview.md) - Metrics and logging
 - [Metrics](docs/06-observability/02-metrics.md) - Prometheus metrics
 - [Logging](docs/06-observability/03-logging.md) - Structured logging
-- [Tracing](docs/06-observability/04-tracing.md) - Distributed tracing
 - [Prometheus Setup](docs/06-observability/05-prometheus-setup.md) - Prometheus configuration
 - [Grafana Dashboards](docs/06-observability/06-grafana-dashboards.md) - Dashboard creation
 - [Alerting](docs/06-observability/07-alerting.md) - Alert configuration
@@ -164,8 +163,6 @@ Complete documentation is available in the `docs/` directory:
 - TypeScript 5.5
 - Winston 3.11 (logging)
 - prom-client 15.1 (metrics)
-- OpenTelemetry 0.51.0 (tracing)
-
 ### Database
 - Supabase (managed PostgreSQL)
 - PostgreSQL adapter (optional)
@@ -208,7 +205,6 @@ Complete documentation is available in the `docs/` directory:
 ### Observability
 - Prometheus metrics (`/metrics` endpoint)
 - Structured JSON logging (Winston)
-- OpenTelemetry distributed tracing
 - SLOs and error budgets
 
 **Source:** Observability in `docs/06-observability/01-observability-overview.md`.

@@ -39,7 +39,7 @@ cp config/workers.env.example .env
 
 ## Sample Configurations
 
-The `samples/` directory contains **12 pre-configured environment files** for different deployment scenarios. All files have been recently synchronized with the latest codebase requirements, including observability (OpenTelemetry), chaos engineering, and admin seed variables.
+The `samples/` directory contains **12 pre-configured environment files** for different deployment scenarios. All files have been recently synchronized with the latest codebase requirements, including observability, chaos engineering, and admin seed variables.
 
 ### Development Scenarios
 
@@ -144,9 +144,6 @@ SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsI
 SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkcWtvdGFqb21xbWNmcm54bWFjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NDMwNzQxMCwiZXhwIjoyMDg5ODgzNDEwfQ.xlThdGsWexYFH3nGIUiU6Yd7stt2v3321GITXcAABzA
 JWT_SECRET=your-secure-random-64-char-string
 
-# Optional: Configure observability
-OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318/v1/traces
-
 # Optional: Enable chaos engineering (for SRE training)
 CHAOS_ENABLED=true
 CHAOS_LATENCY_MS=100
@@ -235,9 +232,6 @@ All config files include the following variable categories:
 |----------|----------|---------|-------------|
 | `ENABLE_METRICS` | No | `true` | Enable Prometheus metrics |
 | `METRICS_PORT` | No | - | Metrics port (uses same port if not set) |
-| `OTEL_SERVICE_NAME` | No | `bharatmart-backend` | OpenTelemetry service name |
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | No | - | OTLP collector endpoint URL |
-| `OTEL_TRACES_SAMPLER` | No | `always_on` | Trace sampling: `always_on`, `always_off`, `traceidratio` |
 
 ### Chaos Engineering
 
@@ -337,7 +331,6 @@ All config files use consistent placeholders:
 
 All config files have been **synchronized** (as of 2024-12-19) to include:
 
-✅ **OpenTelemetry Tracing** - `OTEL_SERVICE_NAME`, `OTEL_EXPORTER_OTLP_ENDPOINT`, `OTEL_TRACES_SAMPLER`  
 ✅ **Chaos Engineering** - `CHAOS_ENABLED`, `CHAOS_LATENCY_MS`  
 ✅ **Admin Seed Variables** - `ADMIN_EMAIL`, `ADMIN_PASSWORD`  
 ✅ **Consistent Logging** - `LOG_FORMAT`, `LOG_FILE`  
@@ -348,7 +341,6 @@ All variables have been verified against actual code usage in:
 - `server/config/*.ts`
 - `server/adapters/*/*.ts`
 - `server/middleware/*.ts`
-- `server/tracing.ts`
 
 ---
 
@@ -362,7 +354,6 @@ All variables have been verified against actual code usage in:
 - `server/config/queue.ts` - Queue configuration (legacy fallback)
 - `server/config/logger.ts` - Winston logger configuration
 - `server/config/metrics.ts` - Prometheus metrics definitions
-- `server/tracing.ts` - OpenTelemetry tracing setup
 
 ### Adapters
 

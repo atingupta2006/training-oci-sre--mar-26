@@ -49,7 +49,7 @@ SRE_Training/
 | # | File | Type |
 |---|---|---|
 | 01 | What is Toil and Why It Must Be Reduced | Theory |
-| 02 | Observability: Metrics, Logs, Traces | Theory |
+| 02 | Observability: Metrics and Logs | Theory |
 | 03 | The Role of Automation in SRE | Theory |
 | 04 | Terraform + OCI Resource Manager Demo | Demo |
 | 05 | OCI Logging Service Real-Time Analysis | **Lab** |

@@ -154,31 +154,31 @@ variable "chaos_error_rate" {
 }
 
 variable "otel_tracing_enabled" {
-  description = "If true, set OTEL_* so server/tracing.ts starts the OTLP HTTP exporter. Point otel_otlp_endpoint at a collector (or leave default for local dev tooling)."
+  description = "Reserved internal flag. Leave false for training stacks."
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "otel_otlp_endpoint" {
-  description = "OTLP/HTTP traces URL (e.g. http://HOST:4318/v1/traces). Ignored when otel_tracing_enabled is false."
+  description = "Reserved internal URL (ignored when otel_tracing_enabled is false)."
   type        = string
   default     = "http://localhost:4318/v1/traces"
 }
 
 variable "otel_service_name" {
-  description = "OpenTelemetry service.name"
+  description = "Reserved internal service name (used only when otel_tracing_enabled is true)."
   type        = string
   default     = "bharatmart-backend"
 }
 
 variable "otel_traces_sampler" {
-  description = "e.g. always_on, always_off"
+  description = "Reserved internal sampler value."
   type        = string
   default     = "always_on"
 }
 
 variable "otel_exporter_otlp_headers" {
-  description = "Optional. Comma-separated key=value for OTLP HTTP (values may be URL-encoded). OCI APM example: authorization=dataKey%20<YOUR_APM_DATA_KEY>. Leave empty for local collectors that do not need auth."
+  description = "Reserved internal header line (optional). Leave empty when unused."
   type        = string
   sensitive   = true
   default     = ""

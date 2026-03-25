@@ -89,47 +89,6 @@ Troubleshooting guide for observability-related problems.
 
 **Source:** Logger format in `server/config/logger.ts`.
 
-## Tracing Issues
-
-### Traces Not Appearing
-
-**Symptom:** No traces in collector
-
-**Solutions:**
-1. **Check OTLP Endpoint:**
-   - Verify `OTEL_EXPORTER_OTLP_ENDPOINT` is set
-   - Check endpoint URL is correct
-   - Test endpoint accessibility
-
-2. **Check Service Name:**
-   - Verify `OTEL_SERVICE_NAME` is set
-   - Check service name format
-   - Review tracing configuration
-
-3. **Check Collector:**
-   - Verify OTLP collector is running
-   - Check collector configuration
-   - Review collector logs
-
-**Source:** Tracing configuration in `server/tracing.ts` lines 13, 20-22.
-
-### Tracing Not Initialized
-
-**Symptom:** Tracing not working
-
-**Solutions:**
-1. **Check Initialization:**
-   - Verify tracing is imported
-   - Check initialization order
-   - Review tracing setup
-
-2. **Check Dependencies:**
-   - Verify OpenTelemetry packages
-   - Check package versions
-   - Review dependency installation
-
-**Source:** Tracing initialization in `server/tracing.ts` lines 15-32.
-
 ## Grafana Issues
 
 ### Dashboards Not Loading

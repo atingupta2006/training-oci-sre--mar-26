@@ -29,7 +29,7 @@ High-level architecture of the BharatMart e-commerce platform.
                      ▼
          ┌──────────────────────┐
          │   Observability       │
-         │ Prometheus + OTLP     │
+         │ Prometheus + logs     │
          └──────────────────────┘
 ```
 
@@ -39,7 +39,7 @@ High-level architecture of the BharatMart e-commerce platform.
 - Database: `server/config/supabase.ts`
 - Cache: `server/config/redis.ts`
 - Workers: `server/workers/index.ts`
-- Observability: `server/config/metrics.ts`, `server/tracing.ts`
+- Observability: `server/config/metrics.ts`, `server/config/logger.ts`
 
 ## Component Overview
 
@@ -118,7 +118,6 @@ High-level architecture of the BharatMart e-commerce platform.
 **Components:**
 - **Metrics:** Prometheus (`server/config/metrics.ts`)
 - **Logging:** Winston (`server/config/logger.ts`)
-- **Tracing:** OpenTelemetry (`server/tracing.ts`)
 
 **Source:** Observability configuration in respective config files.
 
@@ -166,7 +165,6 @@ High-level architecture of the BharatMart e-commerce platform.
 - **TypeScript 5.5** - Type safety
 - **Winston 3.11** - Logging
 - **prom-client 15.1** - Metrics
-- **@opentelemetry/sdk-node 0.51.0** - Tracing
 - **Bull 4.16** - Job queue
 - **ioredis 5.8** - Redis client
 
@@ -177,7 +175,6 @@ High-level architecture of the BharatMart e-commerce platform.
 - **Supabase** - Database & Auth
 - **Redis** - Cache & Queue
 - **Prometheus** - Metrics
-- **OpenTelemetry** - Tracing
 
 ## Deployment Modes
 

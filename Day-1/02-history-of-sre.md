@@ -66,7 +66,7 @@ SRE practices are now essential because:
 OCI was designed with SRE principles in mind:
 
 * **Reliability:** Built-in high availability through Availability Domains and Fault Domains
-* **Observability:** Integrated monitoring, logging, and tracing services
+* **Observability:** Integrated monitoring and logging services
 * **Automation:** Resource Manager (Terraform), Functions, Events for infrastructure automation
 * **Measurability:** Comprehensive metrics and SLI/SLO capabilities
 

@@ -140,7 +140,7 @@ This keeps architecture simple & cost-effective.
 
 ---
 
-### Chaos and OpenTelemetry
+### Chaos (training)
 
 Training material refers to chaos via Terraform variables and `.env` (not a separate “kiosk” mode).
 
@@ -152,8 +152,6 @@ Training material refers to chaos via Terraform variables and `.env` (not a sepa
 | `chaos_events_total` | Prometheus counter; it moves when a chaos 500 is returned. |
 
 For error rates in dashboards, use **`http_requests_total`** (and similar) from your metrics stack.
-
-OpenTelemetry: if `otel_tracing_enabled` is true, `server/tracing.ts` uses `otel_otlp_endpoint` (default `http://localhost:4318/v1/traces`). You need a collector listening there, or change the URL. Set `otel_tracing_enabled` to false to omit `OTEL_*` from the generated `.env`.
 
 ---
 

@@ -25,7 +25,7 @@ OCI's design principles include:
 * **High isolation** through compartments and VCNs
 * **Predictable performance** via bare-metal and virtual compute
 * **Network-level flexibility** similar to on-prem data centres
-* **Integrated observability** through metrics, logs, and traces
+* **Integrated observability** through metrics and logs
 
 This topic focuses on the most important architectural elements relevant for SRE.
 
@@ -43,7 +43,7 @@ This topic focuses on the most important architectural elements relevant for SRE
 
 * Understand how application behaviour interacts with OCI components.
 * Know where latency originates (LB → VM → DB → external calls).
-* Learn how logs, metrics, traces flow through OCI.
+* Learn how logs and metrics flow through OCI.
 
 #### Unified View
 

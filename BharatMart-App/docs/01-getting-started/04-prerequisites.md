@@ -110,7 +110,6 @@ git --version
 
 - **Kubernetes:** For Kubernetes deployment
 - **Prometheus:** For metrics and monitoring
-- **OpenTelemetry:** For distributed tracing
 - **SRE Practices:** For production operations
 
 ## Optional Tools
@@ -126,7 +125,6 @@ git --version
 
 - **Prometheus** - Metrics collection
 - **Grafana** - Metrics visualization
-- **Jaeger/Zipkin** - Trace visualization (if using OpenTelemetry)
 
 ### Deployment Tools
 

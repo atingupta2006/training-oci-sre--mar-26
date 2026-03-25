@@ -108,9 +108,9 @@ Complete glossary of terms and concepts used in the BharatMart platform.
 
 ### Observability
 
-**Definition:** Three pillars: Metrics, Logs, and Traces for system visibility.
+**Definition:** System visibility through metrics and logs (this training stack).
 
-**Components:** Prometheus (metrics), Winston (logs), OpenTelemetry (traces)
+**Components:** Prometheus (metrics), Winston (logs)
 
 **Source:** Observability in `docs/06-observability/01-observability-overview.md`.
 

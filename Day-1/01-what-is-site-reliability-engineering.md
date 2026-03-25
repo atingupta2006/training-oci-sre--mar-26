@@ -99,31 +99,30 @@ Manual operations increase error risk; automation ensures consistency.
 
 #### Systems Must Be Observable
 
-Logs, metrics, and traces allow engineers to understand behaviour, troubleshoot, and improve systems.
+Logs and metrics allow engineers to understand behaviour, troubleshoot, and improve systems.
 
 #### BharatMart Implementation
 
-The platform implements all three pillars of observability:
+The platform implements metrics and structured logging for observability:
 
 ```
 BharatMart Application (Express.js API)
-  |        \            \
-  |         \            \
- Logs     Metrics       Traces
-  |          |            |
-  v          v            v
-Winston  Prometheus  OpenTelemetry
-  |         |            
-  v         v            
-logs/    /metrics     
-api.log  endpoint     
+        |
+   +----+----+
+   |         |
+ Logs    Metrics
+   |         |
+   v         v
+ Winston  Prometheus
+   |         |
+   v         v
+ api.log   /metrics
 ```
 
 #### Key Observability Features
 - **Metrics:** Prometheus metrics exposed at `/metrics` endpoint
 - **Metrics Middleware:** Automatic request tracking and latency measurement
 - **Logging:** Structured JSON logging via Winston logger
-- **Tracing:** Optional distributed tracing via OpenTelemetry
 
 #### Design for Failure
 
@@ -197,14 +196,13 @@ The platform generates comprehensive metrics that would help identify the issue:
      "path": "/api/orders",
      "response_time_ms": 5000,
      "service": "sre-training-platform",
-     "span_id": "6312faf92861776b",
      "status_code": 500,
      "timestamp": "2025-11-30 16:49:50",
-     "trace_id": "087fdc86277e500e32990e3ba6f77966"
+     "requestId": "req-7f3a9c2b"
    }
    ```
 
-   These logs include OpenTelemetry tracing fields (`trace_id`, `span_id`) for distributed tracing correlation and can be ingested into OCI Logging Service.
+   These logs can be ingested into OCI Logging Service for search and analysis.
 
 3. **Business Metrics** - Impact on user transactions
    - `orders_failed_total` - Failed orders due to system issues
@@ -231,7 +229,6 @@ BharatMart is an e-commerce platform specifically designed for SRE training. It 
 
 ### Observability
 - **Structured JSON logging** for easy parsing and analysis
-- **Distributed tracing** via OpenTelemetry (optional)
 - **Health endpoints** for automated monitoring
 
 ### Reliability Engineering

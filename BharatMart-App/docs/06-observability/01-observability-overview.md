@@ -1,8 +1,8 @@
 # Observability Overview
 
-Complete observability strategy covering metrics, logs, and traces.
+Observability for this application is built on **metrics** and **structured logs**.
 
-## Three Pillars of Observability
+## Signals
 
 ### 1. Metrics
 
@@ -32,16 +32,6 @@ Complete observability strategy covering metrics, logs, and traces.
 
 **Source:** Logger configuration in `server/config/logger.ts`. Request logging in `server/middleware/logger.ts`.
 
-### 3. Tracing
-
-**Purpose:** Distributed request tracing across services
-
-**Implementation:** OpenTelemetry with OTLP exporter
-
-**Configuration:** Optional (requires `OTEL_EXPORTER_OTLP_ENDPOINT`)
-
-**Source:** Tracing configuration in `server/tracing.ts`.
-
 ## Tools & Stack
 
 ### Metrics
@@ -60,14 +50,6 @@ Complete observability strategy covering metrics, logs, and traces.
 
 **Source:** Winston dependency in `package.json` line 52. Logger setup in `server/config/logger.ts`.
 
-### Tracing
-
-- **OpenTelemetry SDK:** `@opentelemetry/sdk-node` 0.51.0
-- **Auto-Instrumentation:** `@opentelemetry/auto-instrumentations-node` 0.51.0
-- **Exporter:** OTLP HTTP
-
-**Source:** OpenTelemetry dependencies in `package.json` lines 31-35. Tracing setup in `server/tracing.ts`.
-
 ## Observability Architecture
 
 ```
@@ -76,21 +58,21 @@ Complete observability strategy covering metrics, logs, and traces.
 │  (Express API)  │
 └────────┬────────┘
          │
-    ┌────┴────┬──────────┬──────────┐
-    ▼         ▼          ▼          ▼
-┌────────┐ ┌──────┐ ┌─────────┐ ┌────────┐
-│Metrics │ │Logs  │ │ Traces  │ │Business│
-│/metrics│ │File  │ │  OTLP   │ │ Events │
-└────┬───┘ └───┬──┘ └────┬────┘ └───┬────┘
-     │         │         │          │
-     ▼         ▼         ▼          ▼
-┌─────────────────────────────────────┐
-│      Observability Backend           │
-│  Prometheus | Log Aggregator | OTLP │
-└─────────────────────────────────────┘
+    ┌────┴────┬──────────┐
+    ▼         ▼          ▼
+┌────────┐ ┌──────┐ ┌──────────┐
+│Metrics │ │Logs  │ │ Business │
+│/metrics│ │File  │ │  Events  │
+└────┬───┘ └───┬──┘ └────┬─────┘
+     │         │         │
+     ▼         ▼         ▼
+┌─────────────────────────────────┐
+│      Observability backends      │
+│  Prometheus | Log aggregation  │
+└─────────────────────────────────┘
 ```
 
-**Source:** Architecture derived from implementation in `server/config/metrics.ts`, `server/config/logger.ts`, and `server/tracing.ts`.
+**Source:** Architecture derived from implementation in `server/config/metrics.ts` and `server/config/logger.ts`.
 
 ## Best Practices
 
@@ -131,25 +113,12 @@ Complete observability strategy covering metrics, logs, and traces.
 
 **Source:** Logging practices in `server/config/logger.ts` and `server/middleware/logger.ts`.
 
-### Tracing
-
-1. **Distributed Tracing:**
-   - Enable in production for request correlation
-   - Use OTLP for vendor-agnostic tracing
-
-2. **Instrumentation:**
-   - Auto-instrumentation covers HTTP, database, Redis
-   - Manual instrumentation for custom spans
-
-**Source:** Tracing setup in `server/tracing.ts` lines 16-24.
-
 ## Training vs Production
 
 ### Training Mode
 
 - **Metrics:** Full metrics available for learning
 - **Logging:** Detailed logs for debugging
-- **Tracing:** Optional (can be enabled for learning)
 
 **Use Case:** SRE training, incident simulation labs
 
@@ -157,7 +126,6 @@ Complete observability strategy covering metrics, logs, and traces.
 
 - **Metrics:** Essential for monitoring and alerting
 - **Logging:** Structured logs for analysis
-- **Tracing:** Recommended for distributed systems
 
 **Use Case:** Production monitoring, troubleshooting, performance analysis
 
@@ -189,25 +157,11 @@ scrape_configs:
 
 **Source:** Log file output in `server/config/logger.ts` lines 38-52.
 
-### Trace Collection
-
-**Current:** OTLP exporter (optional)
-
-**Production Recommendation:** Use:
-- Jaeger
-- Zipkin
-- Datadog APM
-- OCI APM (Oracle Cloud)
-
-**Source:** OTLP configuration in `server/tracing.ts` lines 20-22.
-
 ## Next Steps
 
 - [Metrics Reference](02-metrics.md) - Complete metrics documentation
 - [Logging Guide](03-logging.md) - Logging configuration and usage
-- [Tracing Setup](04-tracing.md) - Distributed tracing configuration
 - [Prometheus Setup](05-prometheus-setup.md) - Prometheus installation and configuration
 - [Grafana Dashboards](06-grafana-dashboards.md) - Dashboard creation
 - [Alerting](07-alerting.md) - Alert configuration
 - [SLOs & Error Budgets](08-slos-and-error-budgets.md) - Service level objectives
-

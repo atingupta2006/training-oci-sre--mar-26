@@ -15,7 +15,7 @@ GET /api/system/info
 Returns comprehensive system information including:
 - Application details (name, version, uptime, environment)
 - Deployment configuration (mode, host, port, region)
-- Feature flags status (metrics, logging, tracing, chaos engineering)
+- Feature flags status (metrics, logging, chaos engineering)
 - Service health status (database, cache, workers)
 - Service configurations
 - Observability configuration
@@ -56,12 +56,6 @@ Returns comprehensive system information including:
       "level": "info",
       "format": "json",
       "file": "./logs/api.log"
-    },
-    "tracing": {
-      "enabled": true,
-      "serviceName": "bharatmart-backend",
-      "exporterEndpoint": "http://localhost:4318/v1/traces",
-      "sampler": "always_on"
     },
     "chaosEngineering": {
       "enabled": true,
@@ -141,7 +135,6 @@ Returns comprehensive system information including:
   "observability": {
     "metricsEnabled": true,
     "logsEnabled": true,
-    "tracingEnabled": true,
     "logIngestion": {
       "configured": false,
       "service": null,
@@ -194,7 +187,6 @@ Shows which features are enabled/disabled:
 
 - **Metrics:** Prometheus metrics configuration
 - **Logging:** Winston logging configuration
-- **Tracing:** OpenTelemetry tracing configuration
 - **Chaos Engineering:** Chaos engineering settings
 
 ### Services Health
@@ -257,7 +249,6 @@ High-level configuration summary showing:
 Shows observability setup:
 - Metrics enabled status
 - Logging enabled status
-- Tracing enabled status
 - Log ingestion configuration (OCI Logging)
 - Metrics ingestion configuration (OCI Monitoring)
 

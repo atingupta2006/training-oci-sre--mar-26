@@ -56,8 +56,7 @@ server/
 │   ├── paymentWorker.ts # Payment worker
 │   └── index.ts         # Worker entry point
 ├── app.ts               # Express application
-├── index.ts             # Server entry point
-└── tracing.ts           # OpenTelemetry setup
+└── index.ts             # Server entry point
 ```
 
 **Source:** Server directory structure.

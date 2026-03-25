@@ -44,7 +44,7 @@ ADMIN_EMAIL=${admin_email}
 ADMIN_PASSWORD=${admin_password}
 
 %{ if otel_tracing_enabled ~}
-# ===== OTEL (see server/tracing.ts; optional headers for OCI APM) =====
+# ===== Reserved (advanced; keep disabled for training) =====
 OTEL_SERVICE_NAME=${otel_service_name}
 OTEL_EXPORTER_OTLP_ENDPOINT=${otel_otlp_endpoint}
 OTEL_TRACES_SAMPLER=${otel_traces_sampler}

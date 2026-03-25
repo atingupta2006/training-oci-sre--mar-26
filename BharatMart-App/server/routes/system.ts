@@ -17,7 +17,7 @@ const appStartTime = Date.now();
  * Returns comprehensive system information including:
  * - Application details (name, version, uptime)
  * - Deployment configuration
- * - Feature flags (metrics, logging, tracing, chaos)
+ * - Feature flags (metrics, logging, chaos)
  * - Service health status (database, cache, workers)
  * - Service configurations
  * - Observability configuration
@@ -75,12 +75,6 @@ async function gatherSystemInfo() {
         format: process.env.LOG_FORMAT || 'json',
         file: process.env.LOG_FILE || './logs/api.log'
       },
-      tracing: {
-        enabled: !!process.env.OTEL_EXPORTER_OTLP_ENDPOINT,
-        serviceName: process.env.OTEL_SERVICE_NAME || 'bharatmart-backend',
-        exporterEndpoint: maskSensitive(process.env.OTEL_EXPORTER_OTLP_ENDPOINT),
-        sampler: process.env.OTEL_TRACES_SAMPLER || 'always_on'
-      },
       chaosEngineering: {
         enabled: process.env.CHAOS_ENABLED === 'true',
         latencyMs: parseInt(process.env.CHAOS_LATENCY_MS || '0', 10),
@@ -109,7 +103,6 @@ async function gatherSystemInfo() {
     observability: {
       metricsEnabled: process.env.ENABLE_METRICS !== 'false',
       logsEnabled: true,
-      tracingEnabled: !!process.env.OTEL_EXPORTER_OTLP_ENDPOINT,
       logIngestion: {
         configured: !!process.env.OCI_LOG_OCID,
         service: process.env.OCI_LOG_OCID ? 'OCI Logging' : null,
