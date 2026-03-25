@@ -7,40 +7,12 @@ user_ocid    = "ocid1.user.oc1..aaaaaaa..."
 fingerprint  = "61:b1:d3:bd:56:07:a4:f7:b4:e0:ea:8f:d6:85:e2:ee"
 region       = "eu-frankfurt-1"
 
-# For LOCAL Terraform CLI usage
-private_key_path = "~/.oci/oci_api_key.pem"
+# Copy your OCI user's API private key PEM into this folder as oci_api_key.pem, then zip.
+# fingerprint must match the key uploaded for that user in OCI Console.
+# Leave private_key empty when using the file (recommended for Resource Manager + zip).
+private_key_path = "./oci_api_key.pem"
 
-# For OCI Resource Manager (leave empty when using CLI)
-private_key = <<EOF
------BEGIN PRIVATE KEY-----
-MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCxvVviNcAVny6T
-xUGRoT+lR+I7k+RMXulIVW7TZYzVAe1yUm4BzPtKE+jgi5s3TZDmxgqOtQU4nF1o
-uwvIPefHiKbepgIS1tKQjG9C1orQnqOepTRUyr7SfOPYzGfQRSC7MqLTX1Xv+XTk
-KVQ4ksNJaWN8tieZ2d6J6CrNZC7gkqxOyIyLJl19mx6sQZmh+XpF8KtIKtoIY7hd
-fGdGfJLdZU5TjkuHUTsrqribBOX8FwUUr0gZIxQO3qhQc1F6Jp20wsdfu5yKx5CP
-NqTfxdlyMcEfLOgtISEYywudoZDO2mEoFXHpMfKTjLEo9qYJrTwfAL9tRHDwzjQO
-G5jjXn2tAgMBAAECggEAKv/jrctRKCn1i7xqC4BWNHc6jS1PSwafK2e3wx7LPnET
-79dvU7IyjQ5aBZDgwTVbu+jnfvTeSX7SvlaaGByZ6VTvAehpkgM0t9GxzRq4RJZM
-gUH4chcGqUebm8R/zQwcSg2LBNYIpWDVXal9/Z3L7wO3FOHAnODvjK+FQ2FcUeni
-tlEU/iY+0OkSmOXY1i3IDuxoqd/Epiiq/k5za2pRE8wUDPycwB0Y1D2YIMzklWz6
-NF7fuMHd/yPJF0OXw3jXOZK/87KSu6kHnaEfdMFl1ofjAPQ18KnP/oB2RjmnCG4p
-IyOwdJUkNQfXSLmNcbnB4flL9i6nrEWqR4oumTYERQKBgQDhQt4ZokpQ5yQv4iSH
-utT9BDFckpkUt+EwbB5SP0raTtoCgPsnw8bIPjJ5SER23iXYKlsa5SqYbsmlLYoF
-LHd1sX+e/rlNNFnAUYfJh693dUrQPAX2iiCSrbD/0I+7rOPdKC9wKnZAnndq94k1
-RcFw4zYeQMtF2COM420goDDGhwKBgQDJ/meYEyB2Msdp/IgHCTeq05bqgCaAlKyv
-xrfHhyRYBB6BM4XSvvlPf0Oi/PdG5C14yARAMnGA69P4m7Dh4cjh3c2i49mx6Dvu
-1/9o0fZWwE80jyOq+4ESCcOqt97nIm2V6sxK0aWkhVVm/kdQ9/1eDnMiOTwvnlYq
-oHYmLy3zKwKBgDEPABHzH15JSL9I8A3DadmEzT9NChvSBDAoi937vNCYtbAv6QL7
-B1LbAOEbFRYSQYm3h8nuuP0ju7TGmzWPPqEaPCIjdbXTvew9lWYVr+hDWjzJpb7Q
-zFFFlLPR90u3VpT2yIYUKVbfbECWkoJQo9VzFnk2QU7/yJZJfZ3KZXUHAoGAD3Nj
-TzGfWQs3T7ceXJNq66k1sQhOaaV1tBhaNGv07rqZ7r4XLXCoN1l/vfbln0mS5Ns/
-3/07y2W+mBSoqg6QRB6oPR56p24hL3rcMZNl6WraZCXSz6BfVhbjHark5P8wLLiC
-GfMBXZ1JVBB9OgdOHSSzz9la7jWJV8dgYjlXpXMCgYEAol9akAmsH2rnsjC1SYBp
-1M4nBAn0z4gpG6HN5/QAwCeGG+6T7mos1SUkTyC1ThKIZ7YIZiU75e12/kLnMF6S
-m4NWgrTixm7eiKX+olRW2AxfF/xl8zVC3HeXlpyOwGX7mACRvcnE8omkFlIFX/fo
-0+lxhJe3B46pDED7qhYkCl4=
------END PRIVATE KEY-----
-EOF
+private_key = ""
 
 private_key_password = ""
 

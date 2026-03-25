@@ -137,14 +137,15 @@ output "backend_autoscaling_configuration_id" {
   value       = oci_autoscaling_auto_scaling_configuration.backend_autoscaling.id
 }
 
-# No direct backend instance IPs are shown because backend VMs are ephemeral and created by instance pool.
-# To get instance IPs, use the OCI Console or OCI CLI:
-#   oci compute-management instance-pool list-instances --instance-pool-id <pool-id>
-# This output is commented out because instance pools don't expose instances as a direct attribute.
-# output "backend_pool_instance_private_ips" {
-#   description = "Private IPs of backend instances (dynamic; may change)"
-#   value       = []  # Use OCI Console or CLI to get instance details
-# }
+data "oci_core_instance_pool_instances" "backend_pool_instances" {
+  compartment_id   = var.compartment_ocid
+  instance_pool_id = oci_core_instance_pool.backend_pool.id
+}
+
+output "backend_instance_ids" {
+  description = "OCIDs of instances in the backend pool (use with Console or CLI to read private IPs; changes with scaling)"
+  value       = [for inst in data.oci_core_instance_pool_instances.backend_pool_instances.instances : inst.id]
+}
 
 ############################################################
 # BACKEND API ENDPOINTS
@@ -168,11 +169,13 @@ output "backend_health_check_url" {
 output "bharatmart_summary" {
   description = "High level summary of BharatMart service endpoints & resources"
   value = {
-    load_balancer_ip   = local.lb_public_ips[0]
-    frontend_url       = "http://${local.lb_public_ips[0]}"
-    backend_api        = "http://${local.lb_public_ips[0]}:${var.backend_api_port}"
-    health_check       = "http://${local.lb_public_ips[0]}:${var.backend_api_port}/api/health"
-    frontend_instances = [for fe in oci_core_instance.frontend : fe.public_ip]
-    backend_pool_id    = oci_core_instance_pool.backend_pool.id
+    load_balancer_ip     = local.lb_public_ips[0]
+    frontend_url         = "http://${local.lb_public_ips[0]}"
+    backend_api          = "http://${local.lb_public_ips[0]}:${var.backend_api_port}"
+    health_check         = "http://${local.lb_public_ips[0]}:${var.backend_api_port}/api/health"
+    frontend_public_ips  = [for fe in oci_core_instance.frontend : fe.public_ip]
+    frontend_private_ips = [for fe in oci_core_instance.frontend : fe.private_ip]
+    backend_pool_id      = oci_core_instance_pool.backend_pool.id
+    backend_instance_ids = [for inst in data.oci_core_instance_pool_instances.backend_pool_instances.instances : inst.id]
   }
 }

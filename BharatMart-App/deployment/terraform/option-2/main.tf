@@ -456,9 +456,10 @@ resource "oci_load_balancer_backendset" "backend_api_bs" {
   load_balancer_id = oci_load_balancer_load_balancer.app_lb.id
   policy           = "ROUND_ROBIN"
 
+  # Use / so the probe hits Express root (200, no DB). /api/health touches Supabase and can fail the LB probe.
   health_checker {
     protocol = "HTTP"
-    url_path = "/api/health"
+    url_path = "/"
     port     = var.backend_api_port
   }
 }

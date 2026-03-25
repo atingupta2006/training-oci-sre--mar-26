@@ -1,3 +1,9 @@
+# OCI API private key — required next to .tf files for Terraform (copy before zip; never commit)
+oci_api_key.pem
+
+# SSH private key — never commit. Keep only on your laptop; do not put in Terraform zip.
+bharatmart_terraform_ed25519
+
 # Terraform files
 *.tfstate
 *.tfstate.*

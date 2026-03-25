@@ -18,16 +18,16 @@ import ordersRoutes from './routes/orders';
 import paymentsRoutes from './routes/payments';
 
 const app = express();
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 
-app.use(cors({
-  origin: function (origin, callback) {
-    // Allow any origin for the SRE training environment 
-    // to support dynamic VM IPs and Load Balancers
-    callback(null, true);
-  },
-  credentials: true,
-}));
+// Training / lab: allow any origin (browser + LB IP + port 80 vs 3000 are different origins)
+app.use(
+  cors({
+    origin: '*',
+    credentials: false,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

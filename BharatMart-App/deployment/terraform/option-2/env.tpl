@@ -48,6 +48,6 @@ OTEL_SERVICE_NAME=bharatmart-backend
 OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318/v1/traces
 OTEL_TRACES_SAMPLER=always_on
 
-# ===== CHAOS MODE =====
-CHAOS_ENABLED=true
-CHAOS_LATENCY_MS=800
+# ===== CHAOS MODE (keep off for OCI LB health; enable only for chaos labs) =====
+CHAOS_ENABLED=false
+CHAOS_LATENCY_MS=0

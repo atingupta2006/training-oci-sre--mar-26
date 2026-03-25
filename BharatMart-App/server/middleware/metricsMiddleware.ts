@@ -11,7 +11,13 @@ export async function metricsMiddleware(req: Request, res: Response, next: NextF
     chaosEventsTotal.inc();
   }
 
-  if (chaosLatencyMs > 0) {
+  // Never delay LB health probes or liveness paths (OCI + Supabase timeouts already stress /api/health)
+  const skipChaos =
+    req.path === '/' ||
+    req.path === '/api/health' ||
+    req.path.startsWith('/api/health/');
+
+  if (!skipChaos && chaosLatencyMs > 0) {
     simulatedLatencyMs.set(chaosLatencyMs);
     await new Promise(resolve => setTimeout(resolve, chaosLatencyMs));
   }

@@ -24,6 +24,7 @@ deployment/terraform/
 ├── outputs.tf                 # LB IP, VM IPs, OCIDs
 ├── terraform.tfvars           # User-defined values (your environment)
 ├── terraform.tfvars.example   # Example configuration
+├── troubleshooting.md         # Post-deploy checks (SSH, cloud-init, LB, manual fixes)
 └── README.md                  # This file
 ```
 
@@ -50,39 +51,39 @@ You do not need to manually configure OCIDs, Supabase Keys, or SSH keys, as they
 
 ---
 
-# ▶ **3. Deploy Infrastructure**
+# ▶ **3. Deploy Infrastructure (OCI Resource Manager)**
 
-### **Initialize Terraform**
+This lab is designed to run **inside OCI** using **Resource Manager**. You **zip** the Terraform configuration (this `option-2` folder contents), **upload** it as a stack, and run **Apply** from the console. You do **not** need `terraform init` / `plan` / `apply` on your laptop.
 
-```bash
-terraform init
-```
+### **3.1 Prepare the zip**
 
-### **Validate Syntax**
+1. Ensure **`terraform.tfvars`** is complete (`tenancy_ocid`, `user_ocid`, **`fingerprint`**, **`region`**, **`compartment_ocid`**, **`ssh_public_key`**, app secrets, etc.).
+2. **OCI API private key (one approach for both Resource Manager and local Terraform):**
+   - Copy the **private** `.pem` file that matches **`fingerprint`** in `terraform.tfvars` (the same key registered on your user in **OCI Console → Identity → Users → API keys**).
+   - Save it in **this folder** next to the `.tf` files with the exact name **`oci_api_key.pem`**.
+   - In `terraform.tfvars`, keep **`private_key_path = "./oci_api_key.pem"`** and **`private_key = ""`** (empty). Terraform reads the key from the file; Resource Manager sees it inside the extracted zip.
+3. Zip everything needed for the stack: **`.tf` files**, **`terraform.tfvars`**, **`env.tpl`**, **`oci_api_key.pem`**, etc. Do not rely on paths like `C:\Users\...` or `~/.oci/...` — they do not exist inside Resource Manager.
+4. **`oci_api_key.pem`** is listed in **`.gitignore`** so it is not committed to git by mistake; it still must be **added manually** before you create the zip for each upload.
 
-```bash
-terraform validate
-```
+### **3.2 Create stack and apply**
 
-### **Preview Changes**
+1. OCI Console → **Developer Services** → **Resource Manager** → **Stacks** → **Create stack**.
+2. Upload your **zip**; accept defaults where prompted.
+3. Review **variables** if the wizard exposes them (they may be taken from `terraform.tfvars`).
+4. Run **Plan**, then **Apply** on the stack. Wait until the job **succeeds**.
 
-```bash
-terraform plan
-```
+Provisioning time: typically **4–15 minutes** depending on region and resources.
 
-### **Apply Infrastructure**
+### **3.3 After apply — get outputs**
 
-```bash
-terraform apply
-```
+1. Open the successful **Apply** job → **Outputs** (wording may vary by console version).
+2. Copy outputs you need for SSH and checks: **`load_balancer_public_ip`**, **`frontend_public_ips`**, **`frontend_private_ips`**, **`backend_instance_pool_id`**, **`backend_instance_ids`**, **`bharatmart_summary`** (see **`troubleshooting.md`** for resolving backend **private** IPs from instance OCIDs).
 
-Confirm:
+If outputs are not visible, use the **OCI Console** to find the load balancer public IP and instance IPs (see **`troubleshooting.md`** §1.2).
 
-```
-yes
-```
+### **Optional: local Terraform**
 
-Provisioning time: **4–10 minutes**
+Advanced users may run `terraform init` / `plan` / `apply` on a VM with OCI credentials; this is **not** required for the Resource Manager workflow above.
 
 ---
 
@@ -132,23 +133,20 @@ This keeps architecture simple & cost-effective.
 
 ---
 
-# 📤 **5. Terraform Outputs**
+# 📤 **5. Outputs**
 
-View after apply:
-
-```bash
-terraform output
-```
-
-You will typically see:
+After a successful **Apply**, open the job **Outputs**. Typical values (names match `outputs.tf`):
 
 ```
-load_balancer_public_ip = "129.xxx.xxx.xxx"
-frontend_public_ips     = ["132.xxx.xxx.xxx"]
-frontend_private_ips    = ["10.0.1.10"]
-backend_private_ips     = ["10.0.2.15"]
-backend_instance_ids    = [...]
+load_balancer_public_ip   = "129.xxx.xxx.xxx"
+frontend_public_ips       = ["132.xxx.xxx.xxx"]
+frontend_private_ips      = ["10.0.1.x"]
+backend_instance_pool_id  = "ocid1.instancepool..."
+backend_instance_ids      = ["ocid1.instance..."]
+bharatmart_summary        = { ... }
 ```
+
+Backend **private** IPs: use each id in **`backend_instance_ids`** with the Console or CLI (**`troubleshooting.md`** §1). If job outputs are missing, use **Networking → Load balancers** and **Compute → Instances**.
 
 ---
 
