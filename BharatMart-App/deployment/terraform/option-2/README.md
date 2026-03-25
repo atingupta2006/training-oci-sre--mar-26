@@ -25,11 +25,10 @@ deployment/terraform/
 ├── terraform.tfvars           # User-defined values (your environment)
 ├── terraform.tfvars.example   # Example configuration
 ├── troubleshooting.md         # Post-deploy checks (SSH, cloud-init, LB, manual fixes)
-├── DAY-2-LABS.md              # Maps Day 2 training labs (05–09) to this stack
 └── README.md                  # This file
 ```
 
-**Day 2 (SRE labs):** If you use `Day-2/05-error-budget-*.md` through `09-dashboards-*.md`, read **`DAY-2-LABS.md`** so instance names, health checks, metrics, and chaos settings match **option 2**.
+**Day 2 labs:** If you deploy with this stack, see **`../../../../Day-2/notes-terraform-option-2.md`** (from this `option-2` directory, go up to the `SRE_Repeat_Training` folder, then into `Day-2`).
 
 ---
 
@@ -141,19 +140,20 @@ This keeps architecture simple & cost-effective.
 
 ---
 
-# 🧪 **4b. Chaos engineering & OpenTelemetry**
+### Chaos and OpenTelemetry
 
-There is **no “kiosk mode”** in this repo; training docs refer to **chaos engineering** via env vars.
+Training material refers to chaos via Terraform variables and `.env` (not a separate “kiosk” mode).
 
-| What | Env / Terraform | Notes |
-|------|-------------------|--------|
-| Chaos on/off | `chaos_enabled` | `true` = middleware active (`server/middleware/metricsMiddleware.ts`). |
-| Artificial delay | `chaos_latency_ms` | Milliseconds added per request; **`/`** and **`/api/health*`** are **excluded** so the load balancer stays healthy. |
-| Injected HTTP errors | `chaos_error_rate` → **`CHAOS_ERROR_RATE`** | **0–1** (e.g. **`0.1`** = 10% of eligible requests return **500**). Same meaning as **`Day-2/05-error-budget-breach-simulation-demo.md`**. **`0`** = no injected errors. |
-| Chaos counter metric | **`chaos_events_total`** | Increments when an injected **500** is returned (not on every request). |
-| Observed error rate | Prometheus / Grafana | **`http_request_total`** with **`status_code="500"`** (and real failures). |
+| Setting | Purpose |
+|---------|---------|
+| `chaos_enabled` | Turns chaos middleware on or off. |
+| `chaos_latency_ms` | Extra delay in ms on normal routes; `/` and `/api/health*` are left out so load balancer checks are not delayed. |
+| `chaos_error_rate` | Maps to `CHAOS_ERROR_RATE` (0 to 1). Example: `0.1` means about 10% of eligible requests return HTTP 500. Use `0` when you do not want injected errors. |
+| `chaos_events_total` | Prometheus counter; it moves when a chaos 500 is returned. |
 
-**OpenTelemetry:** When **`otel_tracing_enabled`** is `true`, **`server/tracing.ts`** starts the OTLP HTTP exporter to **`otel_otlp_endpoint`** (default `http://localhost:4318/v1/traces`). Run an OTLP collector on the backend VM or point the URL at your observability stack. Set **`otel_tracing_enabled = false`** if you want no exporter (no `OTEL_*` lines in `.env`).
+For error rates in dashboards, use **`http_requests_total`** (and similar) from your metrics stack.
+
+OpenTelemetry: if `otel_tracing_enabled` is true, `server/tracing.ts` uses `otel_otlp_endpoint` (default `http://localhost:4318/v1/traces`). You need a collector listening there, or change the URL. Set `otel_tracing_enabled` to false to omit `OTEL_*` from the generated `.env`.
 
 ---
 

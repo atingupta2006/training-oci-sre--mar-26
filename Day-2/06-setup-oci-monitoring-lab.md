@@ -1,10 +1,8 @@
 # Day 2: Set up OCI Monitoring (Metrics Explorer) — Hands-on Lab
 
-**Outcome:** Confirm compute metrics in OCI and open **Metric Explorer** on `oci_computeagent`.
+Prerequisites: OCI Console access; BharatMart running; you know which **compartment** to use.
 
-**Prerequisites:** OCI Console access; BharatMart running; know your **compartment** name.
-
-> **Multi-tier (Terraform option 2):** Stack **Outputs** give `load_balancer_public_ip`. Use **`API=http://<LB_IP>:3000`** from your laptop instead of `localhost`. Instance names are like **`bharatmart-fe-1`**. Details: `BharatMart-App/deployment/terraform/option-2/DAY-2-LABS.md`.
+> Multi-tier Terraform (option 2): use the load balancer IP from stack outputs as **`API=http://<LB_IP>:3000`** when you run curl from your laptop; on the VM itself, `http://127.0.0.1:3000` is fine. Instance names often look like `bharatmart-fe-1`. See **`notes-terraform-option-2.md`** in this folder.
 
 ---
 
@@ -28,7 +26,7 @@ Install **`jq`** if missing, or drop `| jq '...'` and read JSON in the browser: 
 
 ## Task 0 — System API (sanity check)
 
-**Goal:** Prove the API responds before using the Console.
+Check that the API answers before you work only in the Console.
 
 1. **Full payload:** `curl -sS "${API}/api/system/info" | jq '.'`
 2. **Deployment:** `curl -sS "${API}/api/system/info" | jq '.deployment'`
@@ -43,7 +41,7 @@ App metric names on `/metrics` include **`http_request_duration_seconds`**, **`h
 
 ## Task 1 — Confirm metrics on a compute instance
 
-**Goal:** See CPU (or network/disk) charts for the VM you care about.
+You should see CPU (or network/disk) charts for the instance you open.
 
 1. Menu **☰ → Compute → Instances**.
 2. **Compartment:** select your training compartment (top bar).
@@ -51,13 +49,13 @@ App metric names on `/metrics` include **`http_request_duration_seconds`**, **`h
 4. Left sidebar → **Metrics** (under **Resources**).
 5. Open **CPU Utilization** (or **Networking** / **Disk**).
 
-**Pass:** A chart shows points from the last minutes (not permanently empty). If **No data:** wait 2–5 minutes; confirm instance **Running**; confirm compartment.
+You should see recent points on the chart. If it stays empty, wait a few minutes, check the instance is **Running**, and that the compartment is correct.
 
 ---
 
 ## Task 2 — Metric Explorer (`oci_computeagent`)
 
-**Goal:** List metric names for one instance.
+Explore metric names for one instance.
 
 1. **☰ → Observability & Management → Monitoring → Metric Explorer**.
 2. **Compartment:** same as the instance.
@@ -66,7 +64,7 @@ App metric names on `/metrics` include **`http_request_duration_seconds`**, **`h
 5. **Resource:** choose **your instance** (resource type **Compute Instance**).
 6. **Interval:** e.g. **1 minute**. Click **Update chart**.
 
-**Pass:** A line chart appears. Try **`NetworkBytesIn`** / **`DiskBytesRead`** with the same resource.
+A line chart should appear. Repeat with **`NetworkBytesIn`** or **`DiskBytesRead`** on the same instance if you want more practice.
 
 **Student table (optional):**
 
@@ -79,12 +77,12 @@ App metric names on `/metrics` include **`http_request_duration_seconds`**, **`h
 
 ## Concepts (short)
 
-- **Namespace** = group of metrics (`oci_computeagent` = VM agent metrics).
-- **Default metrics** = collected by OCI without app changes. **Custom** app metrics need ingestion into OCI (out of scope for this intro lab).
+- A **namespace** groups metrics (`oci_computeagent` is the usual one for VM agent data).
+- **Default** metrics come from OCI without changing the app. **Custom** application metrics need a separate ingestion step into OCI; this lab sticks to defaults.
 
 ---
 
-## Instructor quick check
+## For instructors
 
-- Task 1: Instance **Metrics** tab shows at least one series.
-- Task 2: **Metric Explorer** chart updates when changing metric name / interval.
+- Task 1: the instance **Metrics** tab should show at least one series with data.
+- Task 2: changing metric name or interval in **Metric Explorer** should refresh the chart.

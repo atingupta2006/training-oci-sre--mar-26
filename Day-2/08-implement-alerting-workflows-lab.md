@@ -1,16 +1,16 @@
 # Day 2: Alarms + email notifications — Hands-on Lab
 
-**Outcome:** One **CPU alarm** on a compute instance + **email topic** + alarm **notifies** that topic.
+You will create a CPU alarm on a compute instance, an email notification topic, and attach the topic to the alarm.
 
-**Prerequisites:** Compartment selected in Console; email inbox you can confirm; completed **06** (you can find an instance and `oci_computeagent` metrics).
+Prerequisites: correct compartment in the Console; an email address you can confirm; lab **06** completed (so you know how to pick an instance and `oci_computeagent` metrics).
 
-> **Terraform option 2:** Choose a **backend** pool member or **`bharatmart-fe-1`** for CPU. **`custom.bharatmart`** alarms (Task 3) only work after metric ingestion — skip if namespace is empty. See `BharatMart-App/deployment/terraform/option-2/DAY-2-LABS.md`.
+> Terraform option 2: pick a backend pool member or a frontend such as `bharatmart-fe-1` for the CPU alarm. Task 3 needs `custom.bharatmart` data in Metric Explorer; if it is missing, skip that task. See **`notes-terraform-option-2.md`** in this folder.
 
 ---
 
 ## Task 1 — CPU alarm (no email yet)
 
-**Goal:** Alarm fires when **mean CPU > 70%** for **1 minute**.
+Build an alarm that fires when mean CPU stays above **70%** for **1 minute**.
 
 1. **☰ → Observability & Management → Alarms**.
 2. **Create alarm** (or **Create** in list view).
@@ -59,7 +59,7 @@
 3. **Edit** (or **Manage notifications**)
 4. **Notification destination:** select topic **`<student-id>-cpu-topic`** → **Save**
 
-**Pass:** Alarm detail shows a linked **notification**; subscription status **Confirmed**.
+The alarm should list the topic under notifications, and the email subscription should show as confirmed.
 
 ---
 
@@ -93,10 +93,10 @@ Watch **Alarms** → state should move to **Firing** after delay, then email arr
 
 ---
 
-## Instructor quick check
+## For instructors
 
 | Check | Expected |
 |-------|----------|
 | Alarm query | `oci_computeagent` / `CpuUtilization` / correct instance |
-| Topic | Exists; email **confirmed** |
-| Alarm | Linked to topic |
+| Topic | Present; email subscription confirmed |
+| Alarm | Notification topic attached |

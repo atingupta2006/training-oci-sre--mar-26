@@ -1,3 +1,7 @@
+# Local-only notes or scratch files in this folder (optional)
+LOCAL-*.md
+*-scratch.md
+
 # OCI API private key — required next to .tf files for Terraform (copy before zip; never commit)
 oci_api_key.pem
 

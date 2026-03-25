@@ -4,7 +4,7 @@
 
 **Assumptions:** BharatMart behind an **OCI load balancer** with **≥ 2 backends** (or single backend to show **unhealthy** state). Alarms from **08** optional but useful.
 
-> **Terraform option 2:** Backend service: **`bharatmart-backend`**. LB probe path may be **`/`** (default) or **`/api/health`** — see `deployment/terraform/option-2/DAY-2-LABS.md`. Manual check: **`http://<LB_IP>:3000/api/health`**.
+> Terraform option 2: systemd unit **`bharatmart-backend`**. Load balancer probe path defaults to **`/`**; you can use **`/api/health`** if you change Terraform (see **`notes-terraform-option-2.md`**). Manual check: `http://<LB_IP>:3000/api/health`.
 
 ---
 

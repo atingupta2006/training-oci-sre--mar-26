@@ -1,10 +1,10 @@
 # Day 2: Dashboards — Hands-on Lab
 
-**Outcome:** One **dashboard** with at least **CPU** + **alarm** widgets. Application latency widgets are **optional** if custom metrics are not ingested.
+Build a dashboard with at least CPU and alarm widgets. Latency widgets from application metrics are optional when custom metrics are not in OCI yet.
 
-**Prerequisites:** Alarm from **08** (e.g. `<student-id>-cpu-alarm`). Compartment known.
+Prerequisites: alarm from lab **08** (for example `<student-id>-cpu-alarm`); compartment selected.
 
-> **Terraform option 2:** Use real instance + load balancer **OCIDs/names** from your stack. **`custom.bharatmart`** panels need ingestion — if empty, build the dashboard from **§A only**. See `BharatMart-App/deployment/terraform/option-2/DAY-2-LABS.md`.
+> Terraform option 2: use instance and load balancer names from your stack outputs. If `custom.bharatmart` has no data, use sections A and C only. See **`notes-terraform-option-2.md`** in this folder.
 
 ---
 
@@ -65,7 +65,7 @@ If the namespace is missing, **skip B** — rely on **§A** + **§C**.
 3. Display: **Summary** or **Detailed**
 4. **Add**
 
-**Pass:** Widget shows **OK** or **Firing**.
+The widget should show **OK** or **Firing** for that alarm.
 
 ---
 
@@ -75,10 +75,10 @@ If the namespace is missing, **skip B** — rely on **§A** + **§C**.
 
 ---
 
-## Instructor quick check
+## For instructors
 
 | Widget | Source |
 |--------|--------|
 | CPU | `oci_computeagent` / instance |
 | Alarm | Linked to existing alarm |
-| App charts | Only if custom metrics ingested |
+| App charts | Only if custom metrics are ingested |

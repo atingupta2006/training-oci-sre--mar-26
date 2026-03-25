@@ -39,3 +39,6 @@ desktop.ini
 .terraform/
 
 terraform.tfvars
+
+# Optional: personal notes in course folders (track shared notes under Day-2/ instead)
+**/Day-2/LOCAL-*.md
