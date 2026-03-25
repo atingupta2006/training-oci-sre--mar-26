@@ -65,7 +65,7 @@ Wait until the member is **healthy** again.
 
 ## 4. Alarms & mitigation (talk-track)
 
-1. **Monitoring → Alarms:** show **OK** / **Firing** if CPU or custom alarms exist.
+1. **Monitoring → Alarms:** show **OK** / **Firing** if CPU (or other infrastructure) alarms exist.
 2. Explain: stopping service → LB drains member; chaos → **error budget** / SLO burn without necessarily failing **probe path** **`/`**.
 
 ---

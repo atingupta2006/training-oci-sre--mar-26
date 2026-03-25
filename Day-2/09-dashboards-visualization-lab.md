@@ -1,10 +1,10 @@
 # Day 2: Dashboards — Hands-on Lab
 
-Build a dashboard with at least CPU and alarm widgets. Latency widgets from application metrics are optional when custom metrics are not in OCI yet.
+Build a dashboard with CPU (and optional network or load balancer) charts plus an alarm widget.
 
 Prerequisites: alarm from lab **08** (for example `<student-id>-cpu-alarm`); compartment selected.
 
-> Terraform option 2: use instance and load balancer names from your stack outputs. If `custom.bharatmart` has no data, use sections A and C only. See **`notes-terraform-option-2.md`** in this folder.
+> Terraform option 2: use instance and load balancer names from your stack outputs. See **`notes-terraform-option-2.md`** in this folder.
 
 ---
 
@@ -18,7 +18,7 @@ Prerequisites: alarm from lab **08** (for example `<student-id>-cpu-alarm`); com
 
 ---
 
-## A. Infrastructure widgets (always available)
+## A. Infrastructure widgets (OCI Metric Explorer)
 
 Repeat **Add widget → Chart** (or **Metric chart**) for each row.
 
@@ -42,23 +42,11 @@ Same steps; **Metric name:** `NetworkBytesIn` or `NetworkBytesOut`.
 2. Pick a metric offered for **your** load balancer (e.g. healthy hosts / throughput — names vary).
 3. Resource = **your load balancer**.
 
----
-
-## B. Application metrics (only if `custom.bharatmart` has data)
-
-If **Metric Explorer** shows **`custom.bharatmart`** with series:
-
-1. **Add widget → Chart**
-2. **Namespace:** `custom.bharatmart`
-3. **Metric:** `http_request_duration_seconds` or `http_requests_total`
-4. Add **dimensions** / filters in the UI if prompted (e.g. status).
-5. Title: `API latency` / `Request volume`
-
-If the namespace is missing, **skip B** — rely on **§A** + **§C**.
+Application-level metrics (e.g. `http_request_duration_seconds`) are exposed as **Prometheus** text at **`http://<LB_IP>:3000/metrics`** on the API. They do **not** appear in OCI dashboards unless you implement **custom metric ingestion** (outside the scope of this course). Use **§A** charts for OCI-native visibility.
 
 ---
 
-## C. Alarm widget
+## B. Alarm widget
 
 1. **Add widget → Alarm** (or **Alarm status**)
 2. Select **`<student-id>-cpu-alarm`**
@@ -80,5 +68,5 @@ The widget should show **OK** or **Firing** for that alarm.
 | Widget | Source |
 |--------|--------|
 | CPU | `oci_computeagent` / instance |
+| LB (optional) | `oci_loadbalancer` / your LB |
 | Alarm | Linked to existing alarm |
-| App charts | Only if custom metrics are ingested |

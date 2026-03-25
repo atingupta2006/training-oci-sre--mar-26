@@ -4,7 +4,7 @@ You will create a CPU alarm on a compute instance, an email notification topic, 
 
 Prerequisites: correct compartment in the Console; an email address you can confirm; lab **06** completed (so you know how to pick an instance and `oci_computeagent` metrics).
 
-> Terraform option 2: pick a backend pool member or a frontend such as `bharatmart-fe-1` for the CPU alarm. Task 3 needs `custom.bharatmart` data in Metric Explorer; if it is missing, skip that task. See **`notes-terraform-option-2.md`** in this folder.
+> Terraform option 2: pick a backend pool member or a frontend such as `bharatmart-fe-1` for the CPU alarm. See **`notes-terraform-option-2.md`** in this folder. Application Prometheus metrics (`/metrics` on port **3000**) are **not** shown in OCI Metric Explorer unless you add a separate ingestion pipeline; this lab uses **infrastructure** metrics only.
 
 ---
 
@@ -60,23 +60,6 @@ Build an alarm that fires when mean CPU stays above **70%** for **1 minute**.
 4. **Notification destination:** select topic **`<student-id>-cpu-topic`** → **Save**
 
 The alarm should list the topic under notifications, and the email subscription should show as confirmed.
-
----
-
-## Task 3 — Optional: application metric alarm
-
-Only if **`custom.bharatmart`** appears in **Metric Explorer** with data.
-
-1. **Create alarm**
-2. **Name:** `<student-id>-api-latency-alarm`
-3. **Namespace:** `custom.bharatmart`
-4. **Metric name:** `http_request_duration_seconds` (not `api_latency_seconds`)
-5. **Statistic:** mean or percentile per UI
-6. **Threshold:** e.g. **0.5** (seconds) — tune to your scale
-7. **Trigger delay:** **2 minutes**
-8. **Notifications:** same topic or a new one → **Create**
-
-If the namespace does not exist, **skip** — use infrastructure alarms only.
 
 ---
 

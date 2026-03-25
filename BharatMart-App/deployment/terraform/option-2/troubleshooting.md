@@ -63,6 +63,7 @@ ssh -i ~/.ssh/bharatmart_terraform_ed25519 "opc@${BE}"
 
 ```bash
 sudo cloud-init status --long
+tail -f /var/log/cloud-init-output.log
 sudo grep -iE 'npm install failed|Failed to clone|Nginx failed|Frontend deployment' /var/log/cloud-init-output.log | tail -20
 sudo systemctl is-active nginx
 curl -sS -o /dev/null -w "%{http_code}\n" http://127.0.0.1/
@@ -105,7 +106,7 @@ sudo chown -R opc:opc /opt/bharatmart && sudo systemctl restart bharatmart-backe
 | Backend set | Port | Health path |
 |-------------|------|-------------|
 | Frontend | 80 | `/` |
-| API | 3000 | `/api/health` |
+| API | 3000 | **`/`** by default (`backend_lb_health_check_path` in `terraform.tfvars`). Use `/api/health` only if you set that variable (then Supabase must be up or backends go unhealthy). |
 
 Fix the VM (§3–4), then confirm **Networking → Load balancers →** your LB → **Backend sets** show healthy.
 
@@ -119,5 +120,15 @@ Fix the VM (§3–4), then confirm **Networking → Load balancers →** your LB
 | OK on VM, bad via LB | LB backend registration / health |
 | `cloud-init` / `npm` errors | §3 or §4 logs |
 | Permission errors | Run **`npm`** as **`opc`**, not root |
+| Random **500** on API routes (not on `/` or `/api/health*`) | **Chaos:** set `chaos_error_rate = 0` or `chaos_enabled = false` in `terraform.tfvars`, apply, and replace `.env` / reprovision (see §7) |
+| OTLP / export errors in **journalctl** | **OTEL:** no collector on VM at `localhost:4318` unless you install one — set `otel_tracing_enabled = false` or point `otel_otlp_endpoint` at OCI APM / a real collector |
 
 More copy-paste commands: `commands.sh` in this folder.
+
+---
+
+## 7. Chaos and OpenTelemetry (expected behaviour)
+
+**Chaos** (`CHAOS_ENABLED`, `CHAOS_ERROR_RATE`, `CHAOS_LATENCY_MS` in `.env`): when enabled with `chaos_error_rate > 0`, a fraction of requests to normal API routes return **500** on purpose. **`/`** and **`/api/health*`** are excluded so load balancer probes stay healthy. For a stable demo, use `chaos_error_rate = 0` (and optionally `chaos_enabled = false` or `chaos_latency_ms = 0`).
+
+**OpenTelemetry:** with `otel_tracing_enabled = true` and the default `http://localhost:4318/v1/traces`, nothing receives traces unless you run an OTLP collector on each backend VM. The API still runs; you may see failed export messages in logs. Disable with `otel_tracing_enabled = false` or configure a real endpoint (e.g. OCI APM — see `Day-2/notes-terraform-option-2.md`).
