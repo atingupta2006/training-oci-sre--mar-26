@@ -43,11 +43,14 @@ VITE_SUPABASE_ANON_KEY=${supabase_anon_key}
 ADMIN_EMAIL=${admin_email}
 ADMIN_PASSWORD=${admin_password}
 
-# ===== OTEL =====
-OTEL_SERVICE_NAME=bharatmart-backend
-OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318/v1/traces
-OTEL_TRACES_SAMPLER=always_on
+%{ if otel_tracing_enabled ~}
+# ===== OTEL (SDK starts only when OTEL_EXPORTER_OTLP_ENDPOINT is set — see server/tracing.ts) =====
+OTEL_SERVICE_NAME=${otel_service_name}
+OTEL_EXPORTER_OTLP_ENDPOINT=${otel_otlp_endpoint}
+OTEL_TRACES_SAMPLER=${otel_traces_sampler}
+%{ endif ~}
 
-# ===== CHAOS MODE (keep off for OCI LB health; enable only for chaos labs) =====
-CHAOS_ENABLED=false
-CHAOS_LATENCY_MS=0
+# ===== CHAOS (LB-safe: skips / and /api/health/*) — see CHAOS_ERROR_RATE in docs/04-configuration/01-environment-variables.md =====
+CHAOS_ENABLED=${chaos_enabled}
+CHAOS_LATENCY_MS=${chaos_latency_ms}
+CHAOS_ERROR_RATE=${chaos_error_rate}

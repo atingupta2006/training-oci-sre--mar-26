@@ -231,6 +231,13 @@ locals {
     jwt_secret                = var.jwt_secret
     admin_email               = var.admin_email
     admin_password            = var.admin_password
+    chaos_enabled             = var.chaos_enabled
+    chaos_latency_ms          = var.chaos_latency_ms
+    chaos_error_rate          = var.chaos_error_rate
+    otel_tracing_enabled      = var.otel_tracing_enabled
+    otel_otlp_endpoint        = var.otel_otlp_endpoint
+    otel_service_name         = var.otel_service_name
+    otel_traces_sampler       = var.otel_traces_sampler
   })
 
   app_env_b64 = base64encode(local.app_env)
@@ -459,10 +466,10 @@ resource "oci_load_balancer_backendset" "backend_api_bs" {
   load_balancer_id = oci_load_balancer_load_balancer.app_lb.id
   policy           = "ROUND_ROBIN"
 
-  # Use / so the probe hits Express root (200, no DB). /api/health touches Supabase and can fail the LB probe.
+  # Default path "/" = Express root (200, no DB). Set backend_lb_health_check_path = "/api/health" to match Day-2 lab wording (Supabase must be healthy).
   health_checker {
     protocol = "HTTP"
-    url_path = "/"
+    url_path = var.backend_lb_health_check_path
     port     = var.backend_api_port
   }
 }

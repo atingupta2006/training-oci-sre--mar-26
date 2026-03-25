@@ -20,7 +20,7 @@ Complete documentation of chaos engineering metrics.
 
 **Labels:** None
 
-**Incremented:** When chaos event is triggered (10% probability)
+**Incremented:** When **`CHAOS_ERROR_RATE`** triggers an injected HTTP **500** (see `server/middleware/metricsMiddleware.ts`)
 
 **Source:** Metric definition in `server/config/metrics.ts` lines 71-75.
 

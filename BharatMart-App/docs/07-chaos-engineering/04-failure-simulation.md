@@ -57,16 +57,20 @@ const paymentStatus = simulateFailure ? 'failed' : 'completed';
 
 **Implementation:**
 ```typescript
-if (chaosEnabled && Math.random() < 0.1) {
+const chaosErrorRate = parseFloat(process.env.CHAOS_ERROR_RATE || '0');
+// ...
+if (!skipChaos && chaosEnabled && rate > 0 && Math.random() < rate) {
   chaosEventsTotal.inc();
+  res.status(500).json({ error: 'Chaos: simulated server error' });
+  return;
 }
 ```
 
-**Probability:** 10% (0.1)
+**Probability:** Set by **`CHAOS_ERROR_RATE`** (0–1), e.g. `0.1` for 10% HTTP 500 responses on non-health routes.
 
-**Metric:** `chaos_events_total`
+**Metric:** `chaos_events_total` increments when a chaos **500** is returned.
 
-**Source:** Chaos events in `server/middleware/metricsMiddleware.ts` lines 10-12.
+**Source:** Chaos HTTP errors in `server/middleware/metricsMiddleware.ts`.
 
 ## Failure Scenarios
 

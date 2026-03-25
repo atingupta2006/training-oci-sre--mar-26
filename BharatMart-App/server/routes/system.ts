@@ -84,7 +84,7 @@ async function gatherSystemInfo() {
       chaosEngineering: {
         enabled: process.env.CHAOS_ENABLED === 'true',
         latencyMs: parseInt(process.env.CHAOS_LATENCY_MS || '0', 10),
-        randomFailures: false // Can be extended in future
+        errorRate: parseFloat(process.env.CHAOS_ERROR_RATE || '0')
       }
     },
     services: {

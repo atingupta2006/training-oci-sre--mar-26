@@ -32,7 +32,22 @@ CHAOS_ENABLED=true
 CHAOS_LATENCY_MS=100
 ```
 
-**Source:** Latency configuration in `server/middleware/metricsMiddleware.ts` line 8.
+**Source:** Latency configuration in `server/middleware/metricsMiddleware.ts`.
+
+### CHAOS_ERROR_RATE
+
+**Type:** Number (0–1)
+
+**Default:** `0` (no injected HTTP errors)
+
+**Purpose:** Probability that a non-health request returns **HTTP 500** (for error-budget / LB demos). **`chaos_events_total`** increments when an injected 500 is returned.
+
+**Example:**
+```bash
+CHAOS_ERROR_RATE=0.1
+```
+
+**Source:** `server/middleware/metricsMiddleware.ts`.
 
 ## Configuration Examples
 
@@ -41,14 +56,14 @@ CHAOS_LATENCY_MS=100
 ```bash
 CHAOS_ENABLED=true
 CHAOS_LATENCY_MS=50
+CHAOS_ERROR_RATE=0.1
 ```
 
 **Effect:**
-- Latency injection enabled
-- 50ms latency added to requests
-- 10% random chance of chaos event per request
+- Latency injection enabled (50ms on non-health routes)
+- ~10% of eligible requests return HTTP 500 when `CHAOS_ERROR_RATE=0.1`
 
-**Source:** Chaos behavior in `server/middleware/metricsMiddleware.ts` lines 10-17.
+**Source:** Chaos behavior in `server/middleware/metricsMiddleware.ts`.
 
 ### Production Mode
 
@@ -77,15 +92,15 @@ CHAOS_ENABLED=false
 
 **Source:** Latency injection in `server/middleware/metricsMiddleware.ts` lines 14-17.
 
-### Event Tracking Mode
+### HTTP error injection
 
-**When:** `CHAOS_ENABLED=true`
+**When:** `CHAOS_ENABLED=true` AND **`CHAOS_ERROR_RATE` > 0**
 
 **Behavior:**
-- 10% random chance of chaos event per request
-- `chaos_events_total` metric is incremented on event
+- Each eligible request has an independent chance (rate) of receiving HTTP **500**
+- `chaos_events_total` increments for each injected 500
 
-**Source:** Chaos event tracking in `server/middleware/metricsMiddleware.ts` lines 10-12.
+**Source:** `server/middleware/metricsMiddleware.ts`.
 
 ## Safety Limits
 

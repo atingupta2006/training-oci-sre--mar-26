@@ -132,6 +132,52 @@ variable "admin_password" {
 }
 
 ########################
+# CHAOS & OBSERVABILITY (backend .env)
+########################
+
+variable "chaos_enabled" {
+  description = "Enable chaos middleware (CHAOS_ERROR_RATE injected 500s, CHAOS_LATENCY_MS delay). Paths / and /api/health/* are excluded from chaos so LB probes stay healthy."
+  type        = bool
+  default     = true
+}
+
+variable "chaos_latency_ms" {
+  description = "Milliseconds to await on each non-health request (0 = no added latency). Health paths excluded in metricsMiddleware."
+  type        = number
+  default     = 80
+}
+
+variable "chaos_error_rate" {
+  description = "Probability 0–1 of returning HTTP 500 on non-health routes when chaos_enabled (e.g. 0.1 = 10%). Matches Day-2 CHAOS_ERROR_RATE lab docs."
+  type        = number
+  default     = 0
+}
+
+variable "otel_tracing_enabled" {
+  description = "If true, set OTEL_* so server/tracing.ts starts the OTLP HTTP exporter. Point otel_otlp_endpoint at a collector (or leave default for local dev tooling)."
+  type        = bool
+  default     = true
+}
+
+variable "otel_otlp_endpoint" {
+  description = "OTLP/HTTP traces URL (e.g. http://HOST:4318/v1/traces). Ignored when otel_tracing_enabled is false."
+  type        = string
+  default     = "http://localhost:4318/v1/traces"
+}
+
+variable "otel_service_name" {
+  description = "OpenTelemetry service.name"
+  type        = string
+  default     = "bharatmart-backend"
+}
+
+variable "otel_traces_sampler" {
+  description = "e.g. always_on, always_off"
+  type        = string
+  default     = "always_on"
+}
+
+########################
 # IMAGE SELECTION
 ########################
 
@@ -219,6 +265,12 @@ variable "backend_api_port" {
   description = "Backend API port"
   type        = number
   default     = 3000
+}
+
+variable "backend_lb_health_check_path" {
+  description = "HTTP path for the load balancer health check on the backend listener. Default '/' hits Express root (no DB). Use '/api/health' only if you want probes to match Day-2 lab text (depends on Supabase; may mark backends unhealthy if DB is down)."
+  type        = string
+  default     = "/"
 }
 
 variable "backend_pool_initial_size" {

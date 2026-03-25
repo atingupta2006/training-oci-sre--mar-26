@@ -50,6 +50,17 @@ jwt_secret                = "ySoKyCeGjr/GCrI/6Be2r5nl8GRVlxHLr7md84K7LccKaW2PH0q
 admin_email    = "admin@bharatmart.com"
 admin_password = "Admin@123"
 
+# Chaos — CHAOS_ERROR_RATE 0–1 (Day-2 uses 0.1). Use 0 for no injected 500s.
+chaos_enabled            = true
+chaos_latency_ms         = 80
+chaos_error_rate         = 0.1
+
+# OTEL traces to OTLP HTTP (disable with otel_tracing_enabled = false if no collector).
+otel_tracing_enabled     = true
+otel_otlp_endpoint       = "http://localhost:4318/v1/traces"
+otel_service_name        = "bharatmart-backend"
+otel_traces_sampler      = "always_on"
+
 
 ############################################################
 # IMAGE SETTINGS
@@ -86,6 +97,8 @@ backend_flex_ocpus      = 2
 backend_flex_memory_gbs = 12
 
 backend_api_port = 3000
+
+backend_lb_health_check_path = "/"
 
 backend_pool_initial_size = 2
 backend_pool_min_size     = 1

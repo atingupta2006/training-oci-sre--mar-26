@@ -1,149 +1,91 @@
-# Day 2: Error Budget Breach Simulation Using OCI Health Checks and Failover Testing (Demonstration)
+# Day 2: Error budget + LB failover — Instructor demonstration
 
-### Audience Context: IT Engineers and Developers
+**Audience:** Students watch; instructor drives the Console and one SSH session.
 
----
+**Assumptions:** BharatMart behind an **OCI load balancer** with **≥ 2 backends** (or single backend to show **unhealthy** state). Alarms from **08** optional but useful.
 
-## 0. Deployment Assumptions
-
-This is an instructor-led demonstration. Students observe error budget breach scenarios and automatic failover.
-
-**Assumed Context:**
-* **BharatMart** deployed with Load Balancer and multiple backend instances
-* **OCI Monitoring alarms** configured
-* **Health checks** configured on `/api/health` endpoint
+> **Terraform option 2:** Backend service: **`bharatmart-backend`**. LB probe path may be **`/`** (default) or **`/api/health`** — see `deployment/terraform/option-2/DAY-2-LABS.md`. Manual check: **`http://<LB_IP>:3000/api/health`**.
 
 ---
 
-## 1. Purpose
+## 1. Baseline (2–3 min)
 
-Demonstrate how error budget breaches occur and how OCI health checks and failover mechanisms help protect against SLO violations.
-
----
-
-## 2. Prerequisites
-
-* BharatMart deployed with Load Balancer and multiple backend instances
-* OCI Monitoring alarms configured
-* Health checks configured on `/api/health` endpoint
+1. **Browser:** open app **`http://<LB_IP>/`** (or your URL). Confirm it loads.
+2. **Console:** **Networking → Load balancers →** your LB → **Backend sets**
+   - Note **healthy** count for **backend API** set (port **3000**).
+3. **Optional — Metric Explorer:** **☰ → Monitoring → Metric Explorer**
+   - Namespace **`oci_loadbalancer`** (or your LB metrics) — confirm **healthy backend** count if available.
 
 ---
 
-## 3. What You'll Demonstrate
+## 2. Simulate backend failure
 
-1. **Baseline Performance**
-   * Current SLO compliance status
-   * Normal error rate and latency
-   * Healthy backend instances
+**Goal:** One member **unhealthy**; traffic still works if another backend exists.
 
-2. **Simulate Failure Scenario**
-   * Stop one backend instance (simulating failure)
-   * Inject errors (simulating bug or overload)
-   * Monitor error budget consumption
-
-3. **Observe Automatic Response**
-   * Health check failure detection
-   * Load Balancer failover to healthy backends
-   * Automatic traffic rerouting
-
-4. **Monitor Error Budget Impact**
-   * Track error rate increase
-   * Calculate error budget burn rate
-   * Observe alarm triggers
-
----
-
-## 4. Demonstration Steps
-
-#### Step 1: Establish Baseline
-
-1. **Review Current Metrics:**
-   - Access **OCI Console** → **Monitoring** → **Metric Explorer**
-   - Check current error rate (should be < 0.5%)
-   - Verify all backend instances healthy
-   - Review P99 latency (should be < 500ms)
-
-2. **Check Error Budget Status:**
-   - Calculate current month's error count
-   - Display error budget remaining (e.g., 8,500 / 10,000 remaining)
-
-#### Step 2: Simulate Backend Failure
-
-1. **Stop One Backend Instance:**
+1. **SSH** to **one** backend (private IP; jump via frontend per your runbook).
+2. Stop API:
    ```bash
-   # SSH to one backend instance
-   sudo systemctl stop bharatmart-api
+   sudo systemctl stop bharatmart-backend
    ```
+3. **Console:** Backend set → that member becomes **unhealthy** after probe intervals (~ seconds to a minute).
+4. **Browser / curl:** `curl -sS -o /dev/null -w "%{http_code}\n" "http://<LB_IP>:3000/api/health"` — may still **200** if another backend is healthy.
 
-2. **Observe Health Check Response:**
-   - Health check on `/api/health` starts failing
-   - Load Balancer marks backend as unhealthy
-   - Traffic automatically routes to remaining healthy backends
-
-3. **Monitor in OCI Console:**
-   - **Load Balancer** → **Backend Sets** → Check unhealthy backend count
-   - **Monitoring** → **Metric Explorer** → Check `BackendHealthyHostCount`
-
-#### Step 3: Inject Errors (Simulate Bug)
-
-1. **Enable Chaos Engineering:**
-   - Set environment variable: `CHAOS_ENABLED=true`
-   - Configure error rate: `CHAOS_ERROR_RATE=0.1` (10% errors)
-
-2. **Monitor Error Rate Increase:**
-   - Access **Metric Explorer**
-   - Query: `http_requests_total{status_code="500"}`
-   - Observe error rate climbing
-
-3. **Track Error Budget Consumption:**
-   - Calculate: Errors per minute × minutes remaining in month
-   - Display burn rate projection
-   - Show error budget depletion timeline
-
-#### Step 4: Observe Automatic Mitigation
-
-1. **Health Check Recovery:**
-   - If backend recovers, health checks pass
-   - Load Balancer automatically adds backend back to pool
-
-2. **Error Rate Normalization:**
-   - Once chaos disabled, error rate returns to baseline
-   - Error budget burn stops (unless already exhausted)
-
-3. **Alarm Triggers:**
-   - Review triggered alarms in **Monitoring** → **Alarms**
-   - Check notification delivery (email/SMS)
-   - Review alarm state changes
-
-#### Step 5: Analyze Error Budget Impact
-
-1. **Calculate Consumption:**
-   ```
-   Errors during simulation: 500 errors
-   Error budget consumed: 500 / 10,000 = 5%
-   Remaining budget: 8,000 / 10,000 = 80%
-   ```
-
-2. **Policy Implications:**
-   - If < 50% consumed: Continue normal operations
-   - If 50-75% consumed: Warning, slow feature velocity
-   - If > 75% consumed: Pause releases, focus on stability
+**Recover (before next step):**
+```bash
+sudo systemctl start bharatmart-backend
+```
+Wait until the member is **healthy** again.
 
 ---
 
-## 5. Key Points to Emphasize
+## 3. Inject HTTP errors (chaos)
 
-* **Automatic Failover:** OCI Load Balancer handles backend failures automatically
-* **Health Checks:** Essential for availability SLI measurement
-* **Error Budget Visibility:** Real-time tracking enables proactive decisions
-* **Policy Enforcement:** Clear thresholds guide release decisions
+**Goal:** Elevated **5xx** on API routes; **LB probe** stays healthy if probe path is **`/`** (chaos skips `/` and `/api/health*` in app).
+
+1. On **each backend** (or via redeploy), set in **`$APP/.env`** next to `package.json`:
+   ```bash
+   CHAOS_ENABLED=true
+   CHAOS_ERROR_RATE=0.1
+   ```
+   Then: `sudo systemctl restart bharatmart-backend`
+
+   *(Or set `chaos_enabled` / `chaos_error_rate` in Terraform `terraform.tfvars` and re-apply so cloud-init regenerates `.env` — slower.)*
+
+2. **Generate traffic** hitting non-health routes, e.g.:
+   ```bash
+   for i in $(seq 1 50); do curl -sS -o /dev/null -w "%{http_code}\n" "http://<LB_IP>:3000/api/products"; done
+   ```
+   Expect mix of **200** and **500**.
+
+3. **Observe errors:** If you use **Prometheus/Grafana** scraping **`/metrics`**, query e.g. **`http_requests_total`** by **status_code**. **OCI Metric Explorer** shows **5xx** only if those metrics are **ingested** as custom metrics.
+
+**Stop chaos:** set `CHAOS_ERROR_RATE=0` (and optionally `CHAOS_ENABLED=false`), restart service.
 
 ---
 
-## 6. What Students Should Observe
+## 4. Alarms & mitigation (talk-track)
 
-* How failures impact error budget
-* Automatic failover mechanisms
-* Error budget burn rate calculation
-* Policy enforcement based on error budget status
+1. **Monitoring → Alarms:** show **OK** / **Firing** if CPU or custom alarms exist.
+2. Explain: stopping service → LB drains member; chaos → **error budget** / SLO burn without necessarily failing **probe path** **`/`**.
 
+---
+
+## 5. Error budget math (whiteboard)
+
+Example only:
+
+```
+Errors in window: 500
+Budget (example): 10,000 allowed errors / month
+Consumed: 500 / 10,000 = 5%
+```
+
+Tie to your org’s real budget policy if you have one.
+
+---
+
+## 6. Student takeaway
+
+- LB **health checks** vs **application errors** can differ by **path** and **chaos** settings.
+- **Failover** needs **>1 healthy backend** in the set.
+- **`bharatmart-backend`** is the systemd unit name for Terraform option **2**.

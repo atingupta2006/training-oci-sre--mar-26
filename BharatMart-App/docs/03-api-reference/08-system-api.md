@@ -66,7 +66,7 @@ Returns comprehensive system information including:
     "chaosEngineering": {
       "enabled": true,
       "latencyMs": 800,
-      "randomFailures": false
+      "errorRate": 0.1
     }
   },
   "services": {

@@ -25,8 +25,11 @@ deployment/terraform/
 ├── terraform.tfvars           # User-defined values (your environment)
 ├── terraform.tfvars.example   # Example configuration
 ├── troubleshooting.md         # Post-deploy checks (SSH, cloud-init, LB, manual fixes)
+├── DAY-2-LABS.md              # Maps Day 2 training labs (05–09) to this stack
 └── README.md                  # This file
 ```
+
+**Day 2 (SRE labs):** If you use `Day-2/05-error-budget-*.md` through `09-dashboards-*.md`, read **`DAY-2-LABS.md`** so instance names, health checks, metrics, and chaos settings match **option 2**.
 
 ---
 
@@ -135,6 +138,22 @@ Frontend and backend cloud-init run **`npm install`** and builds as user **`opc`
 ✔ Listener :3000 → Backend API VM(s)
 
 This keeps architecture simple & cost-effective.
+
+---
+
+# 🧪 **4b. Chaos engineering & OpenTelemetry**
+
+There is **no “kiosk mode”** in this repo; training docs refer to **chaos engineering** via env vars.
+
+| What | Env / Terraform | Notes |
+|------|-------------------|--------|
+| Chaos on/off | `chaos_enabled` | `true` = middleware active (`server/middleware/metricsMiddleware.ts`). |
+| Artificial delay | `chaos_latency_ms` | Milliseconds added per request; **`/`** and **`/api/health*`** are **excluded** so the load balancer stays healthy. |
+| Injected HTTP errors | `chaos_error_rate` → **`CHAOS_ERROR_RATE`** | **0–1** (e.g. **`0.1`** = 10% of eligible requests return **500**). Same meaning as **`Day-2/05-error-budget-breach-simulation-demo.md`**. **`0`** = no injected errors. |
+| Chaos counter metric | **`chaos_events_total`** | Increments when an injected **500** is returned (not on every request). |
+| Observed error rate | Prometheus / Grafana | **`http_request_total`** with **`status_code="500"`** (and real failures). |
+
+**OpenTelemetry:** When **`otel_tracing_enabled`** is `true`, **`server/tracing.ts`** starts the OTLP HTTP exporter to **`otel_otlp_endpoint`** (default `http://localhost:4318/v1/traces`). Run an OTLP collector on the backend VM or point the URL at your observability stack. Set **`otel_tracing_enabled = false`** if you want no exporter (no `OTEL_*` lines in `.env`).
 
 ---
 

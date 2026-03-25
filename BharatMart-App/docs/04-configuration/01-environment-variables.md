@@ -340,6 +340,18 @@ CHAOS_LATENCY_MS=100
 
 **Source:** Chaos latency in `server/middleware/metricsMiddleware.ts` line 8.
 
+#### CHAOS_ERROR_RATE
+
+**Type:** Number (probability 0–1)
+
+**Default:** `0`
+
+**Purpose:** When `CHAOS_ENABLED=true`, fraction of requests (excluding `/` and `/api/health*`) that return **HTTP 500** for resilience / error-budget demos. Increments **`chaos_events_total`** when a chaos error is returned.
+
+**Example:** `CHAOS_ERROR_RATE=0.1` (10% errors) — matches training doc `Day-2/05-error-budget-breach-simulation-demo.md`.
+
+**Source:** `server/middleware/metricsMiddleware.ts`.
+
 ### Deployment Configuration
 
 #### DEPLOYMENT_MODE
@@ -436,6 +448,7 @@ VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
 ### Chaos Variables
 - `CHAOS_ENABLED`
 - `CHAOS_LATENCY_MS`
+- `CHAOS_ERROR_RATE`
 
 ### Deployment Variables
 - `DEPLOYMENT_MODE`

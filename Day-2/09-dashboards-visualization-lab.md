@@ -1,263 +1,84 @@
-# Day 2: Create Dashboards and Visualization - Hands-on Lab
+# Day 2: Dashboards — Hands-on Lab
 
-### Audience Context: IT Engineers and Developers
+**Outcome:** One **dashboard** with at least **CPU** + **alarm** widgets. Application latency widgets are **optional** if custom metrics are not ingested.
 
----
+**Prerequisites:** Alarm from **08** (e.g. `<student-id>-cpu-alarm`). Compartment known.
 
-## 0. Deployment Assumptions
-
-For this hands-on lab, you will create monitoring dashboards on your OCI account.
-
-**Prerequisites:**
-* OCI tenancy with appropriate permissions
-* BharatMart running on OCI Compute instance
-* Metrics available (default and/or custom)
-* Alarms created (from previous lab)
+> **Terraform option 2:** Use real instance + load balancer **OCIDs/names** from your stack. **`custom.bharatmart`** panels need ingestion — if empty, build the dashboard from **§A only**. See `BharatMart-App/deployment/terraform/option-2/DAY-2-LABS.md`.
 
 ---
 
-## 1. Objective of This Hands-On
+## Create empty dashboard
 
-By the end of this exercise, students will:
-
-* Understand how to create and organize an OCI Dashboard
-* Build visual panels for latency and uptime metrics
-* Add alarm widgets to unify alert visibility
-* Interpret metrics in the context of reliability and SLOs
-
-This is foundational for later topics: SLO validation, alert tuning, and incident review.
+1. **☰ → Observability & Management → Dashboards**
+2. **Create dashboard**
+3. **Name:** `<student-id>-sre-dashboard`
+4. **Compartment:** training compartment
+5. **Create** → you see an empty canvas.
 
 ---
 
-## 2. Background Before Hands-On
+## A. Infrastructure widgets (always available)
 
-Students should recall:
+Repeat **Add widget → Chart** (or **Metric chart**) for each row.
 
-### 2.1 Dashboards Overview
+### CPU
 
-OCI Dashboards allow you to visualize:
+1. **Add widget → Chart**
+2. **Metric namespace:** `oci_computeagent`
+3. **Metric name:** `CpuUtilization`
+4. **Resource:** your instance
+5. **Interval:** 1 minute
+6. **Widget title:** `CPU`
+7. **Save** / **Apply**
 
-* Compute metrics (CPU, memory, network)
-* Custom metrics (latency, errors, business KPIs)
-* Alarms firing states
-* Logs & traces (via widgets)
+### Network (optional second panel)
 
-Dashboards help SREs:
+Same steps; **Metric name:** `NetworkBytesIn` or `NetworkBytesOut`.
 
-* Validate SLO performance
-* Spot patterns and anomalies
-* Investigate incidents
+### Load balancer (optional)
 
-### 2.2 SLO-Focused Panels
-
-SRE dashboards prioritize panels that show:
-
-* **User-visible performance** → latency, success rate
-* **Error patterns** → 5xx spikes, anomalies
-* **Service uptime** → availability indicators
-* **Burn rate** (later)
-
-This hands-on focuses on the first two.
+1. Namespace **`oci_loadbalancer`**
+2. Pick a metric offered for **your** load balancer (e.g. healthy hosts / throughput — names vary).
+3. Resource = **your load balancer**.
 
 ---
 
-## 3. Hands-On Task 1 — Build a Dashboard for Latency & Uptime
+## B. Application metrics (only if `custom.bharatmart` has data)
 
-#### Purpose
+If **Metric Explorer** shows **`custom.bharatmart`** with series:
 
-Create a clear view of how the system is performing.
+1. **Add widget → Chart**
+2. **Namespace:** `custom.bharatmart`
+3. **Metric:** `http_request_duration_seconds` or `http_requests_total`
+4. Add **dimensions** / filters in the UI if prompted (e.g. status).
+5. Title: `API latency` / `Request volume`
 
-You will build **essential panels**:
-
-1. **Latency panel** using BharatMart custom metrics from `/metrics` endpoint (`http_request_duration_seconds`)
-2. **Error rate panel** using BharatMart custom metrics (`http_requests_total`)
-3. **Uptime panel** (instance state + health)
-4. **Infrastructure panels** (CPU, Network) as complementary metrics
-
-### Steps:
-
-1. Open **Navigation Menu (☰) → Observability & Management → Dashboards**.
-2. Click **Create Dashboard**.
-3. Enter:
-
-   * **Name:** `<student-id>-sre-dashboard`
-   * **Compartment:** your training compartment
-4. Click **Create**.
-
-You will now land in an empty dashboard.
+If the namespace is missing, **skip B** — rely on **§A** + **§C**.
 
 ---
 
-## A. Add Latency Panel Using BharatMart Custom Metrics
+## C. Alarm widget
 
-BharatMart exposes Prometheus metrics at `/metrics` endpoint. These **custom metrics are the primary source** for application-level observability:
+1. **Add widget → Alarm** (or **Alarm status**)
+2. Select **`<student-id>-cpu-alarm`**
+3. Display: **Summary** or **Detailed**
+4. **Add**
 
-- `http_request_duration_seconds` - HTTP request latency (histogram) - **Primary for latency monitoring**
-- `http_requests_total` - Request counts with status codes - **Primary for error rate monitoring**
-- `orders_created_total`, `orders_success_total`, `orders_failed_total` - Business metrics
-- `payments_processed_total` - Payment metrics
-
-#### Prerequisite
-
-BharatMart metrics must be integrated with OCI Monitoring as custom metrics (namespace: `custom.bharatmart`). See previous lab for integration steps.
-
-### Steps to Add Latency Panel:
-
-1. Click **Add Widget → Metric Chart**.
-2. In **Metric Namespace**, choose: `custom.bharatmart`
-3. Under **Metric Name**, select: `api_latency_seconds` or `http_request_duration_seconds`
-4. Configure the chart:
-   - **Statistic:** `Mean` or `P99`
-   - **Interval:** `1 minute`
-5. Title it: **"BharatMart API Latency (P95/P99)"**
-6. Click **Create**.
-
-### Steps to Add Error Rate Panel:
-
-1. Click **Add Widget → Metric Chart**.
-2. In **Metric Namespace**, choose: `custom.bharatmart`
-3. Under **Metric Name**, select: `http_requests_total`
-4. Configure to show error rate:
-   - Filter by status_code dimension if available
-   - Or use separate panels for 2xx vs 5xx requests
-5. Title it: **"BharatMart Error Rate"**
-6. Click **Create**.
-
-### Steps to Add Infrastructure Metrics (Complementary):
-
-For infrastructure-level visibility, add **CPU and Network activity** as complementary panels:
-
-1. Click **Add Widget → Metric Chart**.
-2. In **Metric Namespace**, choose: `oci_computeagent`
-3. Under **Metric Name**, select: `CpuUtilization`
-4. Select your instance: `<student-id>-compute-training`
-5. Title it: **"CPU Utilization (Infrastructure)"**
-6. Click **Create**.
-
-Repeat to add **NetworkBytesIn** or **NetworkBytesOut** panel.
-These infrastructure metrics complement application metrics by showing resource usage.
+**Pass:** Widget shows **OK** or **Firing**.
 
 ---
 
-## B. Add Uptime Panel (Instance Health)
+## Save
 
-1. Click **Add Widget → Metric Chart**.
-2. Namespace:
-
-   * `oci_computeagent`
-3. Metric Name:
-
-   * `CpuUtilization` or `DiskBytesRead`
-4. Change **Chart Type** → `Status` if available.
-
-This chart shows if the instance is reachable and healthy.
-
-Alternative:
-
-* Use a widget showing the instance **Lifecycle State** if available.
+**Save dashboard** (top right). Reopen **Dashboards** → your dashboard → charts should load within a minute.
 
 ---
 
-## 4. Hands-On Task 2 — Add Alarm Widgets
+## Instructor quick check
 
-#### Purpose
-
-Surface current alarms directly on the dashboard.
-
-This helps real SREs quickly detect outages.
-
-### Steps:
-
-1. Click **Add Widget → Alarm**.
-2. Choose your previously created CPU alarm:
-
-   * `<student-id>-cpu-alarm`
-3. Set display mode:
-
-   * `Summary` or `Detailed`
-4. Click **Add**.
-
-Repeat if you create additional alarms (latency, uptime, etc.).
-
----
-
-## 5. What You Should See on Your Dashboard:
-
-* **BharatMart API Latency panel** (`api_latency_seconds` or `http_request_duration_seconds`)
-* **BharatMart Error Rate panel** (`http_requests_total` filtered for errors)
-* **Infrastructure metrics panel** (CPU Utilization, NetworkBytesIn/Out - complementary view)
-* **Uptime panel** (instance health or status)
-* **Alarm widget** showing OK/FIRING state
-
-The dashboard now acts as a basic SRE observability console.
-
----
-
-## 6. Summary of the Hands-On
-
-Today you built:
-
-* A custom SRE dashboard
-* Latency visualization using BharatMart custom metrics (`api_latency_seconds` for latency)
-* Error rate visualization using BharatMart metrics (`http_requests_total`)
-* Infrastructure metrics (CPU, Network) as complementary panels
-* Uptime and instance health visualization
-* Alarm widgets for operational awareness
-
-These are the foundations of an end-to-end observability system.
-
----
-
-## 7. Solutions Key (Instructor Reference)
-
-Use this to verify student dashboards.
-
-### ✔ Solution Key — Task 1: Latency & Uptime Dashboard
-
-#### Expected Widgets:
-
-1. **BharatMart API Latency** (`api_latency_seconds` or `http_request_duration_seconds`)
-2. **BharatMart Error Rate** (`http_requests_total` filtered for errors)
-3. **Infrastructure Metrics** (CPU Utilization, NetworkBytesIn/Out - complementary)
-4. **Instance Health / Status Panel**
-
-#### Expected Dashboard Name:
-
-```
-<student-id>-sre-dashboard
-```
-
-#### Why These Panels Are Correct:
-
-* **BharatMart custom metrics** (`api_latency_seconds`) show actual user-facing latency
-* **Error rate from application metrics** (`http_requests_total`) shows real API errors
-* **Infrastructure metrics** (CPU, Network) complement application metrics by showing resource usage
-* **Uptime panel** shows instance availability
-
-SRE dashboards must highlight **user-facing performance** using application-level custom metrics complemented by infrastructure metrics for complete observability.
-
-### ✔ Solution Key — Task 2: Alarm Widgets
-
-#### Expected Alarm Widget:
-
-* `<student-id>-cpu-alarm`
-
-#### Expected State:
-
-* **OK** (normal) OR
-* **FIRING** (if CPU exceeded threshold)
-
-#### Why This Matters:
-
-Alarms on dashboards give:
-
-* Real-time visibility
-* Quick triage paths
-* Immediate understanding of system health
-
-If students see real values updating, their dashboard is functioning correctly.
-
----
-
-## End of Hands-On Document
-
+| Widget | Source |
+|--------|--------|
+| CPU | `oci_computeagent` / instance |
+| Alarm | Linked to existing alarm |
+| App charts | Only if custom metrics ingested |

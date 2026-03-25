@@ -277,7 +277,7 @@ rate(circuit_breaker_open_total[5m])
 
 **Description:** Total number of chaos engineering events
 
-**Source:** Metric definition in `server/config/metrics.ts` lines 71-75. Incremented in `server/middleware/metricsMiddleware.ts` line 11 (10% random chance when `CHAOS_ENABLED=true`).
+**Source:** Metric definition in `server/config/metrics.ts` lines 71-75. Incremented in `server/middleware/metricsMiddleware.ts` when **`CHAOS_ERROR_RATE`** triggers an injected HTTP 500 (`CHAOS_ENABLED=true`).
 
 **Example Query:**
 ```promql

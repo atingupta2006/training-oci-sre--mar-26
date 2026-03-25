@@ -1,229 +1,102 @@
-# Day 2: Implement Alerting Workflows with OCI Notifications and Email/SMS Triggers - Hands-on Lab
+# Day 2: Alarms + email notifications — Hands-on Lab
 
-### Audience Context: IT Engineers and Developers
+**Outcome:** One **CPU alarm** on a compute instance + **email topic** + alarm **notifies** that topic.
 
----
+**Prerequisites:** Compartment selected in Console; email inbox you can confirm; completed **06** (you can find an instance and `oci_computeagent` metrics).
 
-## 0. Deployment Assumptions
-
-For this hands-on lab, you will create alarms and notification workflows on your OCI account.
-
-**Prerequisites:**
-* OCI tenancy with appropriate permissions
-* BharatMart running on OCI Compute instance
-* Metrics available in OCI Monitoring (default or custom)
-* Email address for notifications
+> **Terraform option 2:** Choose a **backend** pool member or **`bharatmart-fe-1`** for CPU. **`custom.bharatmart`** alarms (Task 3) only work after metric ingestion — skip if namespace is empty. See `BharatMart-App/deployment/terraform/option-2/DAY-2-LABS.md`.
 
 ---
 
-## 1. Objective of This Hands-On
+## Task 1 — CPU alarm (no email yet)
 
-By completing this exercise, students will:
+**Goal:** Alarm fires when **mean CPU > 70%** for **1 minute**.
 
-* Understand how OCI alarms work
-* Configure triggers for CPU usage and custom metrics
-* Set up an email notification topic
-* Attach the topic to alarms
-* Validate that alarms are active and functional
+1. **☰ → Observability & Management → Alarms**.
+2. **Create alarm** (or **Create** in list view).
+3. **Define alarm:**
+   - **Name:** `<student-id>-cpu-alarm`
+   - **Compartment:** your training compartment
+4. **Build a metric query** (wording may vary slightly by UI version):
+   - **Metric namespace:** `oci_computeagent`
+   - **Metric name:** `CpuUtilization`
+   - **Resource:** select **your compute instance** (the BharatMart VM you chose).
+   - **Statistic:** **mean**
+   - **Interval between notifications:** leave default or **1 minute** (match trigger below).
+5. **Trigger rule:**
+   - **Operator:** greater than (**>**)
+   - **Threshold:** `70`
+   - **Trigger delay:** **1 minute** (alarm must breach for this long).
+6. **Severity:** **Warning** (or Critical).
+7. **Notifications:** leave **empty** for now → **Next** / **Create**.
 
-This prepares learners for SLO-based alerting and incident response in later sessions.
-
----
-
-## 2. Hands-On Task 1 — Create an Alarm for CPU Usage
-
-#### Purpose
-
-Monitor CPU load of the Compute instance running the BharatMart application.
-
-This ensures you are alerted when the BharatMart API becomes overloaded due to high traffic during peak shopping hours.
-
-### Steps:
-
-1. Open the **Navigation Menu (☰)**.
-2. Go to **Observability & Management → Alarms**.
-3. Click **Create Alarm**.
-4. Fill the fields:
-
-   * **Name:** `<student-id>-cpu-alarm`
-   * **Compartment:** Select your training compartment.
-5. Under **Alarm Query**, choose:
-
-   * **Metric Namespace:** `oci_computeagent`
-   * **Metric Name:** `CpuUtilization`
-   * **Resource:** Select your instance: `<student-id>-compute-training`
-6. Choose trigger settings:
-
-   * **Statistic:** `Mean`
-   * **Operator:** `Greater than`
-   * **Threshold:** `70`
-   * **Trigger Delay:** `1 minute`
-7. Set **Severity:** `Warning` (or `Critical` if desired).
-8. Scroll down and leave **Notifications** empty for now (we add the email channel next).
-9. Click **Create Alarm**.
-
-### What You Should See:
-
-* Alarm appears in the list
-* Status: **`OK`** (normal)
-* Query correctly references `CpuUtilization`
-
-Once CPU exceeds 70% for 1 minute, the alarm will enter **`FIRING`** state.
+**Pass:** Alarms list shows **`<student-id>-cpu-alarm`**, state **OK** (until CPU spikes).
 
 ---
 
-## 3. Hands-On Task 2 — Add an Email Notification Channel
+## Task 2 — Email topic + subscribe + attach to alarm
 
-#### Purpose
+### A. Topic
 
-Set up a path for alerts to reach you.
+1. Open **Notifications**: **☰ → Developer Services → Application Integration → Notifications**, or type **Notifications** in the Console search bar.
+2. **Topics → Create topic**
+   - **Name:** `<student-id>-cpu-topic`
+   - **Compartment:** same as above
+3. **Create**
 
-Notifications in OCI use the **Notifications Service**, which relies on **Topics** and **Subscriptions**.
+### B. Email subscription
 
-### Steps:
+1. Open the topic **`...-cpu-topic`**.
+2. **Create subscription**
+   - **Protocol:** **Email**
+   - **Endpoint:** your address
+3. **Create** → open the **confirmation email** → **confirm** (required).
 
-### A. Create a Topic
+### C. Attach topic to alarm
 
-1. Open **Navigation Menu → Application Integration → Notifications**.
-2. Click **Topics**.
-3. Click **Create Topic**.
-4. Name the topic:
+1. **☰ → Observability & Management → Alarms**
+2. Open **`<student-id>-cpu-alarm`**
+3. **Edit** (or **Manage notifications**)
+4. **Notification destination:** select topic **`<student-id>-cpu-topic`** → **Save**
 
-   * `<student-id>-cpu-topic`
-5. Click **Create**.
-
-### B. Add an Email Subscription
-
-1. Open the topic you just created.
-2. Click **Create Subscription**.
-3. Choose:
-
-   * **Protocol:** `Email`
-   * **Endpoint:** your email ID
-4. Click **Create**.
-5. Check your email inbox and **confirm the subscription**.
-
-(If you don't confirm, you will NOT receive alarm notifications.)
-
-### C. Attach the Notification Topic to Your Alarm
-
-1. Return to **Observability & Management → Alarms**.
-2. Click your alarm name: `<student-id>-cpu-alarm`.
-3. Click **Edit Alarm**.
-4. Under **Notifications**, choose the topic:
-
-   * `<student-id>-cpu-topic`
-5. Save changes.
-
-### What You Should See:
-
-* Alarm now lists **1 Notification Channel**
-* Topic is active
-* Subscription is confirmed
-
-Your alarm is now fully functional.
-
-If CPU crosses 70%, you will receive an email alert.
+**Pass:** Alarm detail shows a linked **notification**; subscription status **Confirmed**.
 
 ---
 
-## 4. Hands-On Task 3 — Create Alarm for Custom Metrics (Optional)
+## Task 3 — Optional: application metric alarm
 
-#### Purpose
+Only if **`custom.bharatmart`** appears in **Metric Explorer** with data.
 
-Create an alarm based on BharatMart custom metrics (if custom metrics are integrated).
+1. **Create alarm**
+2. **Name:** `<student-id>-api-latency-alarm`
+3. **Namespace:** `custom.bharatmart`
+4. **Metric name:** `http_request_duration_seconds` (not `api_latency_seconds`)
+5. **Statistic:** mean or percentile per UI
+6. **Threshold:** e.g. **0.5** (seconds) — tune to your scale
+7. **Trigger delay:** **2 minutes**
+8. **Notifications:** same topic or a new one → **Create**
 
-### Steps:
-
-1. Click **Create Alarm** again.
-2. **Alarm Information:**
-   * **Name:** `<student-id>-api-latency-alarm`
-   * **Compartment:** Select your compartment
-
-3. **Alarm Query:**
-   * **Metric Namespace:** `custom.bharatmart`
-   * **Metric Name:** `api_latency_seconds` (or `http_request_duration_seconds`)
-   * **Statistic:** `Mean` or `P99`
-   * **Operator:** `Greater than`
-   * **Threshold:** `0.5` (500ms)
-   * **Trigger Delay:** `2 minutes`
-
-4. **Severity:** `Critical`
-
-5. **Notifications:**
-   * Attach the same topic: `<student-id>-cpu-topic`
-   * Or create a separate topic for API alerts
-
-6. Click **Create Alarm**.
+If the namespace does not exist, **skip** — use infrastructure alarms only.
 
 ---
 
-## 5. Summary of the Hands-On
+## Optional — force a CPU alarm to fire (test)
 
-In this lab you learned how to:
+SSH to the **same instance** the alarm monitors, then (Oracle Linux):
 
-* Monitor the Compute VM hosting the BharatMart Application
-* Create a CPU alarm using default OCI metrics
-* Configure an email notification channel via Topics and Subscriptions
-* Attach notifications to the alarm
-* (Optional) Create alarms on custom application metrics
+```bash
+sudo yum install -y stress-ng 2>/dev/null || true
+stress-ng --cpu 4 --timeout 120s
+```
 
-This is the foundation for SRE alerting workflows.
-
----
-
-## 6. Solutions Key (Instructor Reference)
-
-Use this to verify student work.
-
-### ✔ Solution Key — Task 1: CPU Alarm
-
-#### Expected alarm settings:
-
-* **Name:** `<student-id>-cpu-alarm`
-* **Namespace:** `oci_computeagent`
-* **Metric Name:** `CpuUtilization`
-* **Resource:** `<student-id>-compute-training`
-* **Threshold:** `> 70%`
-* **Delay:** `1 minute`
-* **Severity:** `Warning` (acceptable: Critical)
-
-#### Expected results:
-
-* Alarm status = **OK** initially
-* Query correctly displays in preview
-
-### ✔ Solution Key — Task 2: Email Notification Channel
-
-#### Topic:
-
-* **Name:** `<student-id>-cpu-topic`
-
-#### Subscription:
-
-* **Protocol:** Email
-* **Status:** *Confirmed*
-
-#### Alarm configuration:
-
-* Alarm now includes **notification topic**
-* Email address verified
-
-#### Expected outcome:
-
-* A test spike over 70% CPU triggers an email
+Watch **Alarms** → state should move to **Firing** after delay, then email arrives. Stop stress; state returns to **OK**.
 
 ---
 
-## 7. Next Steps
+## Instructor quick check
 
-* Test alarm by generating CPU load
-* Create additional alarms for other metrics
-* Set up SMS notifications (requires PagerDuty or similar integration)
-* Configure composite alarms for complex conditions
-* Use alarms in dashboards (see Dashboard lab)
-
----
-
-## End of Hands-On Document
-
+| Check | Expected |
+|-------|----------|
+| Alarm query | `oci_computeagent` / `CpuUtilization` / correct instance |
+| Topic | Exists; email **confirmed** |
+| Alarm | Linked to topic |
