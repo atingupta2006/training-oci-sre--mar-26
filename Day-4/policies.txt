@@ -1,0 +1,24 @@
+# ============================================================
+# Day 4 — Pre-Verified IAM Policy Strings
+# ============================================================
+# Prerequisites: Day 1-3 policies must be applied first.
+# ============================================================
+
+# --- POLICY 8: Load Balancer Management ---
+Allow group <group-name> to manage load-balancers in compartment <compartment-name>
+
+# --- POLICY 9: Auto Scaling ---
+Allow group <group-name> to manage auto-scaling-configurations in compartment <compartment-name>
+Allow group <group-name> to manage instance-pools in compartment <compartment-name>
+Allow group <group-name> to manage instance-configurations in compartment <compartment-name>
+
+# --- POLICY 10: OCI Vault and Secrets ---
+Allow group <group-name> to manage vaults in compartment <compartment-name>
+Allow group <group-name> to manage keys in compartment <compartment-name>
+Allow group <group-name> to manage secret-family in compartment <compartment-name>
+
+# ============================================================
+# QUICK VERIFY:
+# oci lb load-balancer list --compartment-id <ocid>
+# oci kms vault list --compartment-id <ocid>
+# ============================================================
