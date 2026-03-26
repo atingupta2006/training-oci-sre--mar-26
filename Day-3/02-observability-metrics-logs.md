@@ -12,7 +12,7 @@ For this topic, we assume that **BharatMart e-commerce platform** is already dep
 * **BharatMart API** running on one or more OCI Compute instances
 * **OCI Load Balancer** distributing traffic to API instances
 * **Database** (OCI Autonomous Database or Supabase) for data storage
-* **OCI Cloud Agent** enabled on Compute instances for metric collection
+* **OCI Monitoring** collection for the instance (OS metrics via the compute monitoring agent / plugins where enabled)
 * **BharatMart application** exposing Prometheus metrics at `/metrics` endpoint
 * **Application logs** being generated (Winston logger with JSON format)
 
@@ -157,7 +157,7 @@ External payment gateway experiencing intermittent failures.
 
 * Emit structured JSON logs.
 * Use consistent tagging across metrics and logs.
-* Enable Cloud Agent for full system telemetry.
+* Enable OS-level monitoring on Compute (agent / plugins) where your environment requires it.
 * Use percentiles for latency tracking.
 * Use consistent correlation identifiers in logs where possible.
 

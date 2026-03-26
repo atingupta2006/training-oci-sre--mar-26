@@ -32,7 +32,7 @@ BharatMart infrastructure can be deployed using **OCI Resource Manager with Terr
 5. Deploy BharatMart application on the Compute instances
 6. Configure environment variables and start the application
 
-For detailed deployment instructions, see `deployment/terraform/README.md`.
+For detailed deployment instructions, see `deployment/terraform/README.md`. **Multi-tier training deploy:** **`BharatMart-App/deployment/terraform/option-2`** with **`Day-3/notes-terraform-option-2.md`**.
 
 This operational setup generates various manual tasks that demonstrate toil concepts for SRE learning.
 

@@ -46,7 +46,7 @@ In this lab, students focus on **logs**.
 ### 2.3 BharatMart Structured Logs
 
 The BharatMart application uses **structured JSON logging** via Winston logger. Logs contain fields like:
-- `timestamp`, `level`, `message`, `route`, `status_code`
+- `timestamp`, `level`, `message`, `path`, `status_code`
 - Business context: `orderId`, `userId`, `paymentStatus`
 
 ---
@@ -95,7 +95,7 @@ Complete the steps below **in order**. **Task 1** confirms that system logs reac
 
 1. Finish **Task 1** (system logs).
 2. On the Compute instance that writes **`api.log`** (typically a **backend** instance when using load-balanced option 2), enable **Oracle Cloud Agent** and the relevant **plugin** for custom log files in the Console.
-3. Create the **Custom Log** resource, then attach the log file (Console workflow if your environment provides it, otherwise SSH as in Step 3 below).
+3. Create the **Custom Log** resource (Step 1), then use **Logging → Agent configurations** (Step 3) so **Unified Monitoring Agent (UMA)** on the VM receives a **tail** of `api.log` and ships to that log. You do **not** need to edit JSON or other agent files on the VM for the standard flow—only **restart UMA** (Step 3) after Console and IAM changes.
 
 ---
 
@@ -107,7 +107,7 @@ Complete the steps below **in order**. **Task 1** confirms that system logs reac
    - Name: `<student-id>-bharatmart-api-log`
    - Log Type: Custom Log
    - Click **Create**
-4. Copy the **Log OCID** from the log details page (needed for agent configuration).
+4. Copy the **Log OCID** from the log details page (needed when you create the **Agent configuration** in Step 3).
 
 ---
 
@@ -123,54 +123,90 @@ On the **same** Compute instance where the API runs and `api.log` is written:
 
 ---
 
-### Step 3: Bind the application log file to the Custom Log
+### Step 3: OCI Agent configuration and UMA (Console + one command on the VM)
 
-**Option A — Console:**  
-If the Console offers a workflow to register a **log source** (file path and log association) without editing JSON, use it and skip Option B.
+On **Oracle Linux** with **Unified Monitoring Agent (UMA)**, custom log shipping is configured in the **Console**. The control plane pushes Fluentd configuration to the instance—you **do not** need to create or edit `config.json` under `/opt/oracle-cloud-agent` for this flow. After saving the Agent configuration, **restart UMA** on the VM so it loads the assignment.
 
-**Option B — SSH + agent configuration:**
+**Troubleshooting:** If something does not work after following the steps below, use **`07-oci-logging-agent-troubleshooting.md`** (same Day-3 folder).
 
-1. **SSH to the instance** (see **`notes-terraform-option-2.md`** for jump host to backend if needed):
-   ```bash
-   ssh -i ~/.ssh/your-key opc@<instance-ip>
-   ```
+---
 
-2. **Verify the logging agent service** (name may vary; common on Oracle Linux images):
-   ```bash
-   systemctl status unified-monitoring-agent
-   ```
+#### 3a. Prerequisites (IAM)
 
-3. **Configure the log source** (Cloud Agent logging plugin — path may differ by image):
-   ```bash
-   sudo nano /opt/oracle-cloud-agent/plugins/logging/config.json
-   ```
+1. **Identity → Dynamic groups:** Define a rule that includes this backend instance (for example: `all { instance.compartment.id = '<your-compartment-ocid>' }`). See **`Day-3/policies.txt`** for related IAM patterns.
 
-   Add or merge a **logSources** entry like:
-   ```json
-   {
-     "logSources": [
-       {
-         "logId": "<LOG_OCID>",
-         "logPath": "/path/to/bharatmart/logs/api.log",
-         "logType": "custom",
-         "parser": "json"
-       }
-     ]
-   }
-   ```
+2. **Identity → Policies:** Grant that **dynamic group** permission to upload **log content** and use **log groups** in the compartment where your custom log lives. The instance uses **instance principal** via the dynamic group—not your user’s group.
 
-   Replace:
-   - `<LOG_OCID>` with the Custom Log OCID from Step 1.
-   - **`/opt/bharatmart/BharatMart-App/logs/api.log`** for Terraform option 2 with the training repo (`app_source_subpath = "BharatMart-App"`), unless `LOG_FILE` in `.env` overrides it.
+---
 
-   **Log path:** Confirm with `grep LOG_FILE /opt/bharatmart/BharatMart-App/.env` and `ls -la` on the resolved file — the agent must read a path that **exists** and receives new lines.
+#### 3b. Create the Agent configuration (Console)
 
-4. **Restart the agent** (if the Console did not restart it automatically):
+1. Go to **Observability & Management → Logging → Agent configurations**.
+2. Click **Create agent configuration** (wording may vary slightly).
+3. **Name / compartment:** Use a clear name (e.g. `<student-id>-bharatmart-api-agent`) and the compartment where your resources live.
+4. **Associate with a dynamic group:** Select the dynamic group from **3a** that contains the backend instance where `api.log` is written.
+5. **Log inputs — Add** a log input:
+   - **Log path / file:**  
+     **`/opt/bharatmart/BharatMart-App/logs/api.log`**  
+     (Terraform option 2 + training repo; see **`notes-terraform-option-2.md`** if your path differs.)
+   - **Parser:** **JSON** (so each line is parsed as structured fields, not a single opaque string).
+
+---
+
+#### 3c. JSON parser and event time (BharatMart `api.log`)
+
+BharatMart writes **one JSON object per line** (NDJSON) with **top-level** keys such as `timestamp`, `level`, `path`, `status_code`. Use these settings in the parser section of the log input:
+
+| Setting | Value | Notes |
+|--------|--------|--------|
+| **Simple vs nested JSON** | **Simple JSON** | Use **Nested JSON** only if your payload is wrapped (e.g. JSON under a single parent key). |
+| **Time type** | **STRING** | `timestamp` is a string, not Unix epoch. |
+| **Time key** | **`timestamp`** | Field name in the JSON line. |
+| **Time format** | **`%Y-%m-%d %H:%M:%S`** | Matches values like `2026-03-26 02:30:06`. |
+| **Deep time key** | *(leave empty)* | Only for nested JSON with a dotted path. |
+| **Estimate event time** | **Off / false** | Prefer the log line’s `timestamp`. |
+| **Keep time key** | Optional | **On** if you still want `timestamp` in the record for queries. |
+| **Timeout** | Default | Usually leave default. |
+| **Replace empty strings as null** | Optional | Enable only if you need empty strings normalized. |
+| **Null value pattern** | *(empty)* | Unless you use sentinel strings like `-` or `N/A`. |
+
+If the Console **does not keep** the parser as JSON after you click **Update** (it reverts to **None**), try **removing** the log input and **adding** it again with the same path and JSON settings, then save. See **`07-oci-logging-agent-troubleshooting.md`**.
+
+---
+
+#### 3d. Destination log
+
+- **Destination / custom log:** Select the **custom log** you created in **Step 1** (the **Log OCID** must match the log you open later in Log Explorer).
+
+---
+
+#### 3e. Save and apply on the VM
+
+1. Click **Create** or **Update** on the Agent configuration.
+2. **On the backend VM (SSH):** restart UMA:
+
    ```bash
    sudo systemctl restart unified-monitoring-agent
+   sudo systemctl status unified-monitoring-agent
    ```
 
-5. **Reference:** **`BharatMart-App/docs/06-observability/08-oci-cloud-agent-setup.md`** for more detail and image-specific notes.
+3. **Wait 2–5 minutes** for the control plane to push config and for the first chunks to flush (buffer flush is often on the order of minutes).
+
+---
+
+#### 3f. Verify (optional but recommended)
+
+On the backend VM:
+
+```bash
+sudo grep -R "api.log" /etc/unified-monitoring-agent/conf.d/fluentd_config/fluentd.conf
+sudo grep -E '@type (json|none)' /etc/unified-monitoring-agent/conf.d/fluentd_config/fluentd.conf
+sudo lsof /opt/bharatmart/BharatMart-App/logs/api.log
+```
+
+For the **active** `<source>` that tails `api.log`, you want **`<parse> … @type json`** (not only `@type none`). If you still see only `none`, or multiple duplicate tails, see **`07-oci-logging-agent-troubleshooting.md`**.
+
+**Note:** Older docs sometimes describe editing **`/opt/oracle-cloud-agent/plugins/logging/config.json`**. That path is **not** part of this lab when using **Agent configurations** + UMA. For legacy detail, see **`BharatMart-App/docs/06-observability/08-oci-cloud-agent-setup.md`**.
 
 ---
 
@@ -186,7 +222,7 @@ If the Console offers a workflow to register a **log source** (file path and log
 
 2. Wait **2–5 minutes** for logs to appear (longer immediately after plugin or configuration changes).
 
-**If no lines appear:** Check that Task 1 shows system log activity, that the plugin is **Enabled** on the correct instance (usually the backend), and that the log file path and permissions are correct. Allow several minutes before retesting. Additional agent troubleshooting: **`../Day-4/enable-logs-via-agent.md`**.
+**If no lines appear:** Confirm **Step 3** shows `api.log` under `/etc/unified-monitoring-agent`, Task 1 shows system log activity, the plugin is **Enabled** on the **backend**, and IAM allows the **dynamic group** to upload log content. Allow several minutes before retesting. See **`07-oci-logging-agent-troubleshooting.md`** and **`../Day-4/enable-logs-via-agent.md`**.
 
 ---
 
@@ -204,26 +240,61 @@ Learn how to explore and analyze logs in OCI Logging Service.
 4. Open your log: `<student-id>-syslog` or `<student-id>-bharatmart-api-log`.
 5. Click **Search** to filter and inspect logs.
 
-### Try These Queries:
+---
 
-#### System Logs:
+### Understanding the log shape (custom application log)
 
-* `level = 'ERROR'` - Shows system errors
-* `text LIKE 'systemd'` - Shows service-level events
-* `text LIKE 'ssh'` - Reveals SSH login logs
+When you use a **JSON** parser on `api.log`, OCI still wraps each event in a **CloudEvents-style** envelope. In the Console you may see **`logContent`** with nested **`data`** (metadata under **`oracle`**, **`source`**, **`subject`**, etc.). The **Winston fields** from your app (for example `level`, `path`, `status_code`, `message`) appear under **`logContent.data`** in the raw JSON.
 
-#### Application Logs (if structured JSON):
+In **Logging Search** (including [Advanced search queries](https://docs.oracle.com/en-us/iaas/Content/Logging/Concepts/searchinglogs.htm)), those application fields are indexed under the **`data`** prefix — not at the top level. Use **`data.<fieldname>`** in filters. Field names are **case-sensitive**; BharatMart uses **lowercase** levels such as **`info`** and **`error`**.
 
-* `level = 'error'` - Shows application errors
-* `path = '/api/orders'` - Shows logs for order API
-* `status_code >= 500` - Shows server errors
-* `message contains 'Order created'` - Shows successful order creation
+Examples of paths in **`data`**: `data.level`, `data.path`, `data.status_code`, `data.message`, `data.eventType`.
+
+---
+
+### Try these queries
+
+Use **Advanced** mode if your UI offers it, with a **`search`** scope and **`where`** (see [Logging Query Language Specification](https://docs.oracle.com/en-us/iaas/Content/Logging/Reference/query_language_specification.htm)). Replace the placeholder with your log scope (compartment / log group / log), or rely on the log context you already selected in the Search UI.
+
+**Pattern:**
+
+```text
+search "<compartmentOcid>/<logGroupOcid>/<logOcid>"
+  | where data.level = 'error'
+```
+
+If the Console only shows a **simple** filter row, enter the **field** as `data.level`, `data.path`, etc., when the field picker allows it.
+
+#### System logs (`<student-id>-syslog`)
+
+Structure differs from custom logs. Try:
+
+* `level = 'ERROR'` — may work for syslog severity (case-sensitive).
+* `where logContent = '*systemd*'` or `where logContent = '*ssh*'` — broad text match on the full payload (wildcards as in the query language spec).
+
+#### Application logs (`<student-id>-bharatmart-api-log`, JSON parser)
+
+Use the **`data.`** prefix for Winston fields:
+
+| Goal | Example (`where` clause or filter) |
+|------|-------------------------------------|
+| Application **error** lines | `data.level = 'error'` |
+| **Info** request lines | `data.level = 'info'` |
+| Specific **route** (example: orders API) | `data.path = '/api/orders'` |
+| **Root** path (common in samples) | `data.path = '/'` |
+| HTTP **5xx** responses | `data.status_code >= 500` |
+| By **event** type | `data.eventType = 'api_request'` |
+| Text in **message** | `where logContent = '*Order*'` — or filter on `data.message` if exposed as a string field in your scope |
+
+**Do not** use bare `level`, `path`, or `status_code` alone for custom logs — they are not top-level indexed fields; **`data.level`**, **`data.path`**, **`data.status_code`** are.
+
+---
 
 ### Expected Results:
 
 * System logs show boot messages, systemd events, SSH logs
-* Application logs show API requests, errors, business events
-* Queries filter and display relevant log entries
+* Application logs show API requests, errors, and business fields under **`data`**
+* Queries using **`data.*`** match the structured JSON you parsed on the agent
 
 ---
 
@@ -236,14 +307,14 @@ Use log analysis to identify patterns and issues.
 ### Steps:
 
 1. **Analyze Error Patterns:**
-   - Query: `level = 'error'`
-   - Identify common error messages
+   - Query: `data.level = 'error'` (custom log JSON fields live under **`data`**)
+   - Identify common error messages (for example **`data.message`**)
    - Note error frequency
 
 2. **Analyze Request Patterns:**
-   - Query: `path = '/api/orders'`
+   - Query: `data.path = '/api/orders'` (or **`data.path = '/'`** for root traffic)
    - Identify peak request times
-   - Note response times
+   - Note response times (for example **`data.response_time_ms`** when present)
 
 3. **Correlate with Metrics:**
    - Check `/metrics` endpoint for error counts
@@ -258,7 +329,7 @@ In this exercise, you learned how to:
 
 * Understand monitoring vs observability
 * Enable system logs on a compute instance
-* Configure application log ingestion (Oracle Cloud Agent plugins, then log file binding)
+* Configure application log ingestion (Console: plugins, **Agent configuration** with JSON parser — see **Step 3**; IAM; on VM: **restart UMA** only, then verify). For problems, see **`07-oci-logging-agent-troubleshooting.md`**.
 * Use OCI Logging to search, filter, and read logs
 * Analyze log patterns for troubleshooting
 
@@ -288,7 +359,7 @@ These form the foundation for debugging, incident resolution, and SLO validation
 
 * Log created: `<student-id>-bharatmart-api-log`
 * Oracle Cloud Agent plugins enabled (Custom Logs / equivalent)
-* Custom Log OCID bound to correct **backend** file path; agent restarted if needed
+* **Agent configuration** ties dynamic group + **`api.log`** path to that custom log (parser **JSON** per **Step 3**); **UMA restarted**; optional **`grep api.log`** / **`@type json`** under `/etc/unified-monitoring-agent` confirms apply. See **`07-oci-logging-agent-troubleshooting.md`** if ingestion or parsing fails.
 
 #### Outcome:
 
@@ -299,10 +370,9 @@ These form the foundation for debugging, incident resolution, and SLO validation
 
 #### Example queries:
 
-* `level = 'ERROR'` → shows system errors
-* `level = 'error'` → shows application errors
-* `path = '/api/orders'` → shows order API logs
-* `status_code >= 500` → shows server errors
+* **Syslog:** `level = 'ERROR'` (may apply to system log shape) or `where logContent = '*keyword*'`
+* **Custom JSON log (BharatMart):** use **`data.`** prefix — `data.level = 'error'`, `data.path = '/api/orders'`, `data.status_code >= 500`
+* See **Task 3** section for full **`search` / `where`** patterns and envelope explanation
 
 ### Using these results
 

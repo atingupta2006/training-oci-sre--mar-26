@@ -38,6 +38,10 @@ Logging-based custom metrics appear under the **`oci_logging`** namespace in Met
 - **Traffic:** `curl` the API via **`http://<LB_IP>:3000/...`** or hit the UI at **`http://<LB_IP>/`**.
 - **Chaos (optional):** if enabled in **`terraform.tfvars`**, some API routes may return **500**; health routes **`/`** and **`/api/health*`** are excluded. For stable demos, set **`chaos_error_rate = 0`**.
 
+## Custom application logs (UMA)
+
+Shipping **`api.log`** to OCI Logging uses **Logging → Agent configurations** (dynamic group + file path + destination log), **IAM** for the **dynamic group**, plugins as needed, and **`sudo systemctl restart unified-monitoring-agent`** on the instance. You normally **do not** edit agent JSON on the VM. See **lab 05**, **`Day-3/policies.txt`**, and **`../Day-4/enable-logs-via-agent.md`** if ingestion does not appear.
+
 ## Related
 
 - **`BharatMart-App/deployment/terraform/option-2/troubleshooting.md`** — SSH and repair commands.
