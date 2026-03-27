@@ -126,23 +126,3 @@ Then **configure the source** to match Oracle’s [Monitoring source instruction
 2. Open the prefix **`metrics/`** (or the prefix you set).  
 3. After some delay, you should see **`.gz`** objects (Oracle: **gzip**)
 4. **Download** an object and decompress (for example `gunzip` locally) to inspect **metric-related** JSON lines.
-
----
-
-# **7. Real-world notes (short)**
-
-* **Metric archive vs alarm trail:** Use this pattern for **long-term metric retention**. Use **Notifications**, **Streaming**, **Logging**, or other services for **notification** and **log** archival.  
-* **Cost and scope:** Selecting many namespaces or compartments increases data moved—stay within Oracle limits and business needs.  
-* **Centralization:** Multiple connectors can land in one bucket if IAM and residency rules allow.  
-* **Downstream:** Object Storage is a common staging area for analytics and SIEM ingestion.
-
----
-
-# **8. When the Console does not match this doc**
-
-OCI updates navigation and wizards often. If a control is missing or labeled differently:
-
-* Use **Search** for **Connector Hub** and **Monitoring**.  
-* Compare your screen to [Creating a Connector with a Monitoring Source](https://docs.oracle.com/en-us/iaas/Content/connector-hub/create-service-connector-monitoring-source.htm).  
-* Some options vary by **region** or **subscription**.  
-* Official troubleshooting: [Troubleshooting Connectors](https://docs.oracle.com/en-us/iaas/Content/connector-hub/troubleshooting.htm).
