@@ -154,34 +154,21 @@ variable "chaos_error_rate" {
 }
 
 variable "otel_tracing_enabled" {
-  description = "Reserved internal flag. Leave false for training stacks."
+  description = "When true, sets OTEL_TRACES_LOG_FILE and OTEL_SERVICE_NAME for the Node backend (NDJSON span file). Matches BharatMart server/tracing.ts."
   type        = bool
   default     = false
 }
 
-variable "otel_otlp_endpoint" {
-  description = "Reserved internal URL (ignored when otel_tracing_enabled is false)."
+variable "otel_traces_log_file" {
+  description = "Absolute path for span NDJSON (OTEL_TRACES_LOG_FILE). Leave empty to use <app_root>/logs/otel-spans.jsonl (app_root is /opt/bharatmart or /opt/bharatmart/<app_source_subpath>)."
   type        = string
-  default     = "http://localhost:4318/v1/traces"
+  default     = ""
 }
 
 variable "otel_service_name" {
-  description = "Reserved internal service name (used only when otel_tracing_enabled is true)."
+  description = "OTEL_SERVICE_NAME for the backend resource (default bharatmart-backend)."
   type        = string
   default     = "bharatmart-backend"
-}
-
-variable "otel_traces_sampler" {
-  description = "Reserved internal sampler value."
-  type        = string
-  default     = "always_on"
-}
-
-variable "otel_exporter_otlp_headers" {
-  description = "Reserved internal header line (optional). Leave empty when unused."
-  type        = string
-  sensitive   = true
-  default     = ""
 }
 
 ########################

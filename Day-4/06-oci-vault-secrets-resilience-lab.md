@@ -9,9 +9,11 @@
 For this hands-on lab, you will configure OCI Vault for secure secrets management.
 
 **Prerequisites:**
-* OCI tenancy with appropriate permissions
-* Compute instance running (for secret retrieval)
+* OCI tenancy with appropriate permissions (see **`policies.txt`**; Vault policies for **user groups** differ from **dynamic-group** policies below)
+* Compute instance running (for secret retrieval with **instance principal**)
 * Access to OCI Console
+
+**Optional reference:** `get-secrets-from-key-vault.md` and `get-key-1.py` / `get-key-2.py` (set `SECRET_OCID` and `OCI_REGION`).
 
 ---
 
@@ -138,7 +140,7 @@ Retrieve secret programmatically using instance principal.
    ssh opc@<instance-public-ip>
    ```
 
-2. **Install OCI CLI if needed:**
+2. **Install OCI CLI if needed** (Oracle Linux 8/9 often has `dnf`; some images use `yum`):
    ```bash
    sudo dnf install -y oci-cli
    ```
@@ -147,10 +149,11 @@ Retrieve secret programmatically using instance principal.
    - Go to Vault → Secrets → Your secret
    - Copy the OCID
 
-4. **Retrieve the secret value:**
+4. **Retrieve the secret value** (on the instance, use instance principal):
    ```bash
    oci secrets secret-bundle get \
      --secret-id <secret-ocid> \
+     --auth instance_principal \
      --query "data.\"secret-bundle-content\".content" \
      --raw-output | base64 --decode
    ```

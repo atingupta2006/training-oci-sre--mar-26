@@ -1,8 +1,6 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import './tracing';
-
 import express from 'express';
 import cors from 'cors';
 import { logApiEvent } from './middleware/logger';

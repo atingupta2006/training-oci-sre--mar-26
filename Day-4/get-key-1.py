@@ -1,21 +1,15 @@
+"""Example: retrieve a Vault secret using API key config (~/.oci/config). Set SECRET_OCID and region."""
+import os
 import oci
 import base64
 
+SECRET_OCID = os.environ.get("SECRET_OCID", "<YOUR_SECRET_OCID>")
+REGION = os.environ.get("OCI_REGION", "ap-mumbai-1")
+
 config = oci.config.from_file()
-print(config)
+endpoint = f"https://secrets.vaults.{REGION}.oci.oraclecloud.com"
+client = oci.secrets.SecretsClient(config, service_endpoint=endpoint)
 
-#config = oci.config.from_file()
-
-# IMPORTANT → Set secrets endpoint for your region
-secrets_client = oci.secrets.SecretsClient(
-    config,
-    service_endpoint="https://secrets.vaults.eu-frankfurt-1.oci.oraclecloud.com"
-)
-
-secret_id = "ocid1.vaultsecret.oc1.eu-frankfurt-1.amaaaaaahqssvraa3p6yz2l6nfp6d4i2jx7z5unqrlfyag3mhwuokj6ew2mq"
-
-bundle = secrets_client.get_secret_bundle(secret_id).data
+bundle = client.get_secret_bundle(SECRET_OCID).data
 encoded = bundle.secret_bundle_content.content
-decoded = base64.b64decode(encoded).decode()
-
-print(decoded)
+print(base64.b64decode(encoded).decode())

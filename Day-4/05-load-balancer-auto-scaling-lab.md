@@ -2,6 +2,8 @@
 
 ### Audience Context: IT Engineers and Developers
 
+> **Terraform / layout:** If you use the training stack, see **`../Day-3/notes-terraform-option-2.md`** for LB URL, ports, and instance naming.
+
 ---
 
 ## 0. Deployment Assumptions
@@ -9,8 +11,8 @@
 For this hands-on lab, you will configure OCI Load Balancer with Auto Scaling for BharatMart.
 
 **Prerequisites:**
-* OCI tenancy with appropriate permissions
-* BharatMart deployed on Compute instances
+* OCI tenancy with appropriate permissions (`policies.txt` in this folder)
+* BharatMart deployed on Compute instances (or an existing instance pool)
 * Access to OCI Console
 
 ---
@@ -42,13 +44,21 @@ Auto Scaling automatically adjusts capacity based on metrics (CPU, memory, reque
 
 ---
 
-## 3. Deploy App Behind OCI Load Balancer
+## 3. Deploy the app behind an OCI Load Balancer
 
-## 4. Configure Instance Pools Across Fault Domains
+If you **already** have a load balancer from Terraform or a prior lab, **open it** and confirm a **backend set** (HTTP port **3000**, health check **`/api/health`**) points at your app instances. You only need to **attach** new pool members in **§6**.
+
+If you are **creating** a load balancer from scratch: **Networking → Load Balancers → Create** (public or private as required), add a **listener** (e.g. HTTP **80** or **3000**), then create a **backend set** and add backends (**§6**). Exact screens vary by shape (network load balancer vs flexible LB).
+
+**Single-AD regions:** You still spread instances across **fault domains** within that AD; “multiple ADs” may not apply.
+
+---
+
+## 4. Configure instance pools across fault domains
 
 #### Purpose
 
-Provide redundancy through multiple application servers across Fault Domains.
+Provide redundancy through multiple application servers across fault domains.
 
 ### Steps
 
@@ -78,7 +88,7 @@ Instance pool created with instances across multiple Fault Domains.
 
 ---
 
-## 5. Hands-On Task 3 — Configure Auto Scaling
+## 5. Configure auto scaling
 
 #### Purpose
 
@@ -151,19 +161,24 @@ Validate that system maintains availability during failures.
    ```
    Verify responses come from different instances.
 
-2. **Simulate Instance Failure:**
+2. **Simulate instance failure** (replace with your instance OCID):
    ```bash
-   # Stop one instance
+   oci compute instance action --instance-id <INSTANCE_OCID> --action STOP --wait-for-state STOPPED
    ```
 
-3. **Observe Failover:**
+3. **Observe failover:**
    * Load Balancer marks instance unhealthy
    * Traffic routed to remaining instances
    * Service continues operating
 
-4. **Verify Auto Scaling:**
+4. **Verify auto scaling:**
    * Generate load on instances
    * Monitor CPU utilization
    * Verify auto-scaling adds instances when CPU > 70%
+
+5. **Recover:** start the instance again when finished:
+   ```bash
+   oci compute instance action --instance-id <INSTANCE_OCID> --action START --wait-for-state RUNNING
+   ```
 
 ---

@@ -1,0 +1,36 @@
+# ============================================================
+# Day 5 - Pre-Verified IAM Policy Strings
+# ============================================================
+# Prerequisites: Day 1-4 policies must be applied first.
+# Replace <group-name>, <compartment-name>, <dynamic-group-name> as needed.
+# ============================================================
+
+# --- POLICY 11: OCI Events Service (Event Rules - not the same as Connector Hub) ---
+Allow group <group-name> to manage cloudevents-rules in compartment <compartment-name>
+Allow group <group-name> to inspect compartments in tenancy
+
+# --- POLICY 12: Grafana OCI Plugin (read-only metrics access) ---
+# The OCI plugin uses your OCI CLI credentials (~/.oci/config)
+# No additional policy needed beyond Day 2 POLICY 4 (metrics read)
+
+# --- POLICY 13: DevOps (if used for Canary Release tracking) ---
+Allow group <group-name> to manage devops-family in compartment <compartment-name>
+
+# --- POLICY 14: Connector Hub (05-service-connector-hub-incident-response-lab.md) ---
+# Resource type is serviceconnectors (no hyphen). See:
+# https://docs.oracle.com/en-us/iaas/Content/Security/Reference/sch_security.htm#iam-policies
+# https://docs.oracle.com/en-us/iaas/Content/Identity/Reference/serviceconnectorhubpolicyreference.htm
+Allow group <group-name> to manage serviceconnectors in compartment <compartment-name>
+Allow group <group-name> to manage alarms in compartment <compartment-name>
+Allow group <group-name> to inspect metrics in compartment <compartment-name>
+
+# --- POLICY 15: Object Storage target for Connector Hub ---
+Allow group <group-name> to manage buckets in compartment <compartment-name>
+Allow group <group-name> to manage objects in compartment <compartment-name>
+
+# ============================================================
+# QUICK VERIFY:
+# oci events rule list --compartment-id <ocid>
+# oci sch service-connector list --compartment-id <ocid>
+# oci os bucket list --compartment-id <ocid>
+# ============================================================

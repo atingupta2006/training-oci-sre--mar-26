@@ -17,6 +17,9 @@ Allow group <group-name> to manage vaults in compartment <compartment-name>
 Allow group <group-name> to manage keys in compartment <compartment-name>
 Allow group <group-name> to manage secret-family in compartment <compartment-name>
 
+# --- POLICY 11: Instance principal ? read secrets (use with dynamic group from vault lab) ---
+# Allow dynamic-group <dynamic-group-name> to read secret-bundles in compartment <compartment-name>
+
 # ============================================================
 # QUICK VERIFY:
 # oci lb load-balancer list --compartment-id <ocid>

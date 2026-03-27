@@ -14,6 +14,9 @@ locals {
   # Clone root is always /opt/bharatmart; app may be nested (e.g. training repo → BharatMart-App/)
   app_root = var.app_source_subpath != "" ? "/opt/bharatmart/${var.app_source_subpath}" : "/opt/bharatmart"
 
+  # OpenTelemetry file export: explicit path or default under app working directory
+  otel_traces_log_file_effective = var.otel_traces_log_file != "" ? var.otel_traces_log_file : "${local.app_root}/logs/otel-spans.jsonl"
+
   ad_names = [for ad in data.oci_identity_availability_domains.ads.availability_domains : ad.name]
   ad_count = length(local.ad_names)
 
@@ -234,11 +237,9 @@ locals {
     chaos_enabled             = var.chaos_enabled
     chaos_latency_ms          = var.chaos_latency_ms
     chaos_error_rate          = var.chaos_error_rate
-    otel_tracing_enabled         = var.otel_tracing_enabled
-    otel_otlp_endpoint           = var.otel_otlp_endpoint
-    otel_service_name            = var.otel_service_name
-    otel_traces_sampler          = var.otel_traces_sampler
-    otel_exporter_otlp_headers   = var.otel_exporter_otlp_headers
+    otel_tracing_enabled   = var.otel_tracing_enabled
+    otel_service_name      = var.otel_service_name
+    otel_traces_log_file   = local.otel_traces_log_file_effective
   })
 
   app_env_b64 = base64encode(local.app_env)

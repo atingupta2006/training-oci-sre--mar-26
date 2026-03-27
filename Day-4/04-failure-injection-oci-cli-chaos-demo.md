@@ -52,20 +52,25 @@ Demonstrate how to inject controlled failures to test system resilience and vali
 
 ## 4. Demonstration Steps
 
-#### Step 1: Baseline System State
+#### Step 1: Baseline system state
 
-1. **Check Current State:**
-2. **Review Metrics:**
+1. **List backend instances** (replace compartment / pool as appropriate):
+   ```bash
+   oci compute instance list --compartment-id <COMPARTMENT_OCID> --query "data[*].{id:id,displayName:\"display-name\",state:\"lifecycle-state\"}" --output table
+   ```
+2. **Confirm Load Balancer health** in the Console (**Networking → Load Balancers → Backend sets**) or with CLI if configured.
+3. **Review metrics** (Grafana, OCI Monitoring, or `curl http://<LB_IP>:3000/api/health`).
+
 ---
 
-#### Step 2: Inject Instance Failure
+#### Step 2: Inject instance failure
 
-1. **Stop One Backend Instance:**
+1. **Stop one backend instance** (get `<INSTANCE_OCID>` from the pool or Console):
    ```bash
-   # Stop instance
+   oci compute instance action --instance-id <INSTANCE_OCID> --action STOP --wait-for-state STOPPED
    ```
 
-2. **Observe System Response:**
+2. **Observe system response:**
    * Load Balancer detects failure
    * Traffic automatically rerouted
    * Health checks mark backend as unhealthy
@@ -89,7 +94,7 @@ Demonstrate how to inject controlled failures to test system resilience and vali
    export CHAOS_ENABLED=true
    export CHAOS_LATENCY_MS=500
    
-   # Restart application
+   # Restart the app service (replace with your actual systemd unit name)
    sudo systemctl restart bharatmart-api
    ```
 
@@ -98,9 +103,27 @@ Demonstrate how to inject controlled failures to test system resilience and vali
    * Users experience slower responses
    * Alarms trigger if thresholds exceeded
 
-3. **Monitor System Behavior:**
+3. **Monitor system behavior:**
    * Check if auto-scaling triggers
    * Verify timeout and retry logic
    * Observe error handling
+
+---
+
+#### Step 4: Recovery (required)
+
+1. **Disable chaos** if you enabled it: unset `CHAOS_*`, restart the app, or restore the unit file as per your deployment.
+2. **Start the stopped instance:**
+   ```bash
+   oci compute instance action --instance-id <INSTANCE_OCID> --action START --wait-for-state RUNNING
+   ```
+3. Confirm **backend health** on the load balancer before ending the session.
+
+---
+
+## 5. Wrap-up
+
+* Summarize what the LB and pool did during stop/start.
+* Record any unexpected alarms or gaps in monitoring.
 
 ---

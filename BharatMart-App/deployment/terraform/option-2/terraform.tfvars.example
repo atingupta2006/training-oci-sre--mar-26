@@ -55,12 +55,10 @@ chaos_enabled            = true
 chaos_latency_ms         = 80
 chaos_error_rate         = 0.1
 
-# Reserved internal flags (keep defaults for training)
-otel_tracing_enabled       = false
-otel_otlp_endpoint         = "http://localhost:4318/v1/traces"
-otel_service_name          = "bharatmart-backend"
-otel_traces_sampler        = "always_on"
-otel_exporter_otlp_headers   = ""
+# OpenTelemetry: NDJSON spans to OTEL_TRACES_LOG_FILE (see env.tpl). false = no OTEL_* in .env
+otel_tracing_enabled  = false
+otel_service_name     = "bharatmart-backend"
+otel_traces_log_file  = ""
 
 
 ############################################################
