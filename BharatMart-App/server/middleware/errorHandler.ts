@@ -1,8 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
 import { errorTotal } from '../config/metrics';
+import { logger } from '../config/logger';
+import { getActiveTraceLogFields } from '../lib/traceContext';
 
 export function errorHandler(err: Error, req: Request, res: Response, next: NextFunction) {
-  console.error('Error:', err);
+  logger.error(err.message, {
+    ...getActiveTraceLogFields(),
+    stack: err.stack,
+    path: req.path,
+    name: err.name,
+  });
 
   const statusCode = res.statusCode !== 200 ? res.statusCode : 500;
 

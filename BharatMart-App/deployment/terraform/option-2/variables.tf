@@ -171,6 +171,12 @@ variable "otel_service_name" {
   default     = "bharatmart-backend"
 }
 
+variable "enable_api_events_db" {
+  description = "When true, middleware logs each request to Supabase table api_events (ENABLE_API_EVENTS_DB). Set false if the table is absent to avoid failed outbound calls and extra trace noise."
+  type        = bool
+  default     = true
+}
+
 ########################
 # IMAGE SELECTION
 ########################

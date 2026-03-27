@@ -60,6 +60,9 @@ otel_tracing_enabled  = false
 otel_service_name     = "bharatmart-backend"
 otel_traces_log_file  = ""
 
+# true = insert each API request into Supabase api_events; false = skip (e.g. table not created yet)
+enable_api_events_db = true
+
 
 ############################################################
 # IMAGE SETTINGS

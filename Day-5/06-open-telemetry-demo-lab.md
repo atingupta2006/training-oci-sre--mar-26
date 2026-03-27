@@ -56,6 +56,15 @@ Each line is one span. You should see HTTP spans for incoming requests and a spa
 
 Confirm the path is writable, the variable is set before the process starts, and you are hitting the API (not only the Vite dev server for the browser).
 
+### Terraform option 2 (OCI deploy)
+
+In `BharatMart-App/deployment/terraform/option-2/terraform.tfvars`:
+
+* **`otel_tracing_enabled`** — `true` injects `OTEL_SERVICE_NAME` and `OTEL_TRACES_LOG_FILE` into the backend `.env` on each VM (default file path under the app: `.../logs/otel-spans.jsonl` when `otel_traces_log_file` is left empty).
+* **`enable_api_events_db`** — `true` sets `ENABLE_API_EVENTS_DB=true` so the middleware inserts request rows into Supabase **`api_events`**. The table and policies must exist; otherwise you will see failing outbound `POST` spans to `/rest/v1/api_events`. Set **`false`** in tfvars only if you are not using that table yet.
+
+After apply, restart or rely on your userdata/systemd flow so the generated `.env` is loaded. Full detail: `../BharatMart-App/docs/open-telemetry-demo.md`.
+
 ---
 
 ## End of lab document

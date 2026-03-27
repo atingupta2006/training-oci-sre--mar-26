@@ -1,14 +1,22 @@
 import { Request, Response, NextFunction } from 'express';
 import { supabase } from '../config/supabase';
 import { logger } from '../config/logger';
+import { getActiveTraceLogFields } from '../lib/traceContext';
 
 let isColdStart = true;
 
+const verboseRequestConsole =
+  process.env.LOG_VERBOSE_REQUESTS === 'true' || process.env.LOG_VERBOSE_REQUESTS === '1';
+
+const enableApiEventsDb =
+  process.env.ENABLE_API_EVENTS_DB !== 'false' && process.env.ENABLE_API_EVENTS_DB !== '0';
+
 export function logApiEvent(req: Request, res: Response, next: NextFunction) {
   const startTime = Date.now();
-  
-  // IMMEDIATE DEBUG LOG - This will always appear
-  console.log(`📝 [LOGGER] Request received: ${req.method} ${req.path}`);
+
+  if (verboseRequestConsole) {
+    console.log(`[LOGGER] ${req.method} ${req.path}`);
+  }
 
   const requestSize = req.headers['content-length'] 
     ? parseInt(req.headers['content-length'], 10) 
@@ -17,6 +25,7 @@ export function logApiEvent(req: Request, res: Response, next: NextFunction) {
   // IMMEDIATE LOG - Log right away, don't wait for finish
   try {
     logger.info('API Request Started', {
+      ...getActiveTraceLogFields(),
       method: req.method,
       path: req.path,
       user_agent: req.get('user-agent'),
@@ -44,6 +53,7 @@ export function logApiEvent(req: Request, res: Response, next: NextFunction) {
 
     try {
       logger.info('API Request', {
+        ...getActiveTraceLogFields(),
         method: req.method,
         path: req.path,
         status_code: res.statusCode || 200,
@@ -59,21 +69,22 @@ export function logApiEvent(req: Request, res: Response, next: NextFunction) {
       console.error('❌ Error in logger.info (finish):', error);
     }
 
-    // Database logging (async, fire and forget)
-    (async () => {
-      try {
-        await supabase.from('api_events').insert({
-          event_type: 'api_request',
-          endpoint: req.path,
-          method: req.method,
-          status_code: res.statusCode || 200,
-          response_time_ms: responseTime,
-          error_message: res.statusCode >= 400 ? res.statusMessage : null,
-        });
-      } catch (error) {
-        // Silently fail database logging
-      }
-    })();
+    if (enableApiEventsDb) {
+      (async () => {
+        try {
+          await supabase.from('api_events').insert({
+            event_type: 'api_request',
+            endpoint: req.path,
+            method: req.method,
+            status_code: res.statusCode || 200,
+            response_time_ms: responseTime,
+            error_message: res.statusCode >= 400 ? res.statusMessage : null,
+          });
+        } catch {
+          // ignore
+        }
+      })();
+    }
   };
 
   // Attach BOTH listeners immediately

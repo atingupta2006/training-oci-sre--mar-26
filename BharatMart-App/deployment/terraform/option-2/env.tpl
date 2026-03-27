@@ -29,6 +29,7 @@ CACHE_TYPE=memory
 LOG_LEVEL=debug
 LOG_FORMAT=json
 LOG_FILE=./logs/api.log
+ENABLE_API_EVENTS_DB=${enable_api_events_db}
 
 # ===== METRICS =====
 ENABLE_METRICS=true

@@ -240,6 +240,7 @@ locals {
     otel_tracing_enabled   = var.otel_tracing_enabled
     otel_service_name      = var.otel_service_name
     otel_traces_log_file   = local.otel_traces_log_file_effective
+    enable_api_events_db   = var.enable_api_events_db ? "true" : "false"
   })
 
   app_env_b64 = base64encode(local.app_env)
